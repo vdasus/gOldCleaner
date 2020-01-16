@@ -1,0 +1,21 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="gOldCleaner.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="FolderList" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">&lt;ArrayOfFolderItemDto&gt;
+            &lt;FolderItemDto&gt;
+              &lt;Description&gt;test&lt;/Description&gt;
+              &lt;FolderName&gt;C:\REPO\GDB\Utils\gOldCleaner\temp&lt;/FolderName&gt;
+              &lt;DeleteAfter&gt;-30&lt;/DeleteAfter&gt;
+            &lt;/FolderItemDto&gt;
+            &lt;FolderItemDto&gt;
+              &lt;Description&gt;test&lt;/Description&gt;
+              &lt;FolderName&gt;C:\REPO\GDB\Utils\gOldCleaner\temp\1&lt;/FolderName&gt;
+              &lt;DeleteAfter&gt;-15&lt;/DeleteAfter&gt;
+            &lt;/FolderItemDto&gt;
+          &lt;/ArrayOfFolderItemDto&gt;
+</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>

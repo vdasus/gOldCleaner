@@ -60,12 +60,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ApplicationServices\ApplicationService.cs" />
-    <Compile Include="ApplicationServices\IApplicationService.cs" />
     <Compile Include="CompositionRoot.cs" />
-    <Compile Include="Domain\StorageItem.cs" />
+    <Compile Include="Domain\IItemsRoot.cs" />
+    <Compile Include="Domain\ItemsRoot.cs" />
+    <Compile Include="Dto\FolderItemDto.cs" />
+    <Compile Include="Domain\FileItem.cs" />
     <Compile Include="Domain\FolderItem.cs" />
-    <Compile Include="InfrastructureServices\FsService.cs" />
+    <Compile Include="InfrastructureServices\StorageService.cs" />
+    <Compile Include="InfrastructureServices\IInformer.cs" />
+    <Compile Include="InfrastructureServices\Informer.cs" />
     <Compile Include="InfrastructureServices\IStorageService.cs" />
     <Compile Include="InfrastructureServices\NDeskOptions.cs" />
     <Compile Include="InfrastructureServices\Xml.cs" />
@@ -85,7 +88,9 @@
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="ApplicationServices\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>if $(ConfigurationName) == Release $(SolutionDir)vrinc.exe -r -m0001 -f$(ProjectDir)Properties\AssemblyInfo.cs -t"AssemblyVersion\(\"(\d+)\.(\d+)\.(\d+)\.(\d+)\"\)"</PreBuildEvent>

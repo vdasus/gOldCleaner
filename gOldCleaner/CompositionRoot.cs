@@ -1,6 +1,6 @@
 ﻿using System.IO.Abstractions;
 using DryIoc;
-using gOldCleaner.ApplicationServices;
+using gOldCleaner.Domain;
 using gOldCleaner.InfrastructureServices;
 using NLog;
 
@@ -9,7 +9,7 @@ namespace gOldCleaner
     public static class CompositionRoot
     {
         public static Container Container { get; set; } = new Container();
-        private static readonly Logger Log = LogManager.GetCurrentClassLogger();
+        private static readonly Logger _log = LogManager.GetCurrentClassLogger();
 
         static CompositionRoot()
         {
@@ -18,11 +18,13 @@ namespace gOldCleaner
 
         private static void InitContainer()
         {
-            Container.Register<IApplicationService, ApplicationService>();
-            Container.Register<IStorageService, FsService>();
-
+            Container.Register<IStorageService, StorageService>();
+            
+            Container.Register<IInformer, Informer>(Reuse.Singleton);
+            Container.Register<IItemsRoot, ItemsRoot>(Reuse.Singleton);
             Container.Register<IFileSystem, FileSystem>(Reuse.Singleton);
-            Container.Use<ILogger>(Log);
+            
+            Container.Use<ILogger>(_log);
 
             //Container.UseInstance(InitMappings());
         }

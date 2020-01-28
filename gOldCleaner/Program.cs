@@ -1,13 +1,13 @@
-﻿using CSharpFunctionalExtensions;
-using DryIoc;
-using gOldCleaner.ApplicationServices;
+﻿using DryIoc;
 using gOldCleaner.Domain;
+using gOldCleaner.Dto;
 using gOldCleaner.InfrastructureServices;
 using gOldCleaner.Properties;
 using NLog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace gOldCleaner
 {
@@ -17,13 +17,11 @@ namespace gOldCleaner
         private const string APP_DESCRIPTION = "Cleanup old files";
 
         private static bool _isRun;
-        private static IApplicationService _app;
-
+        
         static int Main(string[] args)
         {
             var logger = CompositionRoot.Container.Resolve<ILogger>();
-            _app = CompositionRoot.Container.Resolve<IApplicationService>();
-
+            
             logger.Info(
                 $"{APP_NAME} v{System.Reflection.Assembly.GetExecutingAssembly().GetName().Version} type -h or --help or -? to see usage");
 
@@ -33,7 +31,7 @@ namespace gOldCleaner
                 {"r|run", "Go full prpocessing", v => _isRun = v != null},
                 {"h|?|help", "show this message and exit.", v => help = v != null}
             };
-            var failuresList = new List<string>();
+            
             try
             {
                 p.Parse(args);
@@ -46,16 +44,12 @@ namespace gOldCleaner
 
                 if (!_isRun) return 0;
 
-                var folders = GetFoldersFromSettings();
+                var folders = MapFolders(Settings.Default.FolderList.XmlDeserializeFromString<List<FolderItemDto>>());
 
                 foreach (var folder in folders)
                 {
-                    _app.CleanupFolderReturnFailures(folder)
-                        .Tap(x => failuresList.AddRange(x))
-                        .OnFailure(e => logger.Error(e));
+                    folder.Cleanup();
                 }
-
-                _app.Inform(failuresList);
 
                 logger.Info("Done.");
 
@@ -68,16 +62,6 @@ namespace gOldCleaner
             }
         }
 
-        private static IEnumerable<FolderItem> GetFoldersFromSettings()
-        {
-            var folders = Settings.Default.FolderList.XmlDeserializeFromString<List<FolderItemDto>>();
-
-            return folders.Select(folder =>
-                    new FolderItem(folder.Description, folder.FolderName,
-                        _app.ConvertStringToTimeSpan(folder.DeleteAfter), folder.SearchPattern, folder.IsDeleteEmptyFolders))
-                .ToList();
-        }
-
         private static void ShowHelp(OptionSet p)
         {
             Console.WriteLine($"Usage: {APP_NAME} [OPTIONS]+");
@@ -85,6 +69,30 @@ namespace gOldCleaner
             Console.WriteLine(string.Empty);
             Console.WriteLine("Options:");
             p.WriteOptionDescriptions(Console.Out);
+        }
+
+        public static IEnumerable<FolderItem> MapFolders(List<FolderItemDto> folders)
+        {
+            var itemsRoot = CompositionRoot.Container.Resolve<IItemsRoot>();
+            return folders.Select(folder =>
+                    itemsRoot.CreateFolderItem(folder.Description, folder.FolderName,
+                        ConvertStringToTimeSpan(folder.DeleteAfter), folder.SearchPattern, folder.IsDeleteEmptyFolders))
+                .ToList();
+        }
+
+        public static TimeSpan ConvertStringToTimeSpan(string timespanString)
+        {
+            var data = Regex.Match(timespanString, @"(\d+)(\w)");
+            var num = int.Parse(data.Groups[1].Value);
+            var term = data.Groups[2].Value.ToUpperInvariant();
+
+            switch (term)
+            {
+                case "D": return TimeSpan.FromDays(num);
+                case "M": return TimeSpan.FromMinutes(num);
+                case "H": return TimeSpan.FromHours(num);
+                default: throw new ArgumentException($"Bad {nameof(FolderItem.DeleteAfter)} parameter {num}{term}");
+            }
         }
     }
 }

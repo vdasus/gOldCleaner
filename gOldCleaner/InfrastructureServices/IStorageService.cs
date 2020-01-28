@@ -1,13 +1,16 @@
-﻿using gOldCleaner.Domain;
-using System.Collections.Generic;
-using CSharpFunctionalExtensions;
+﻿using CSharpFunctionalExtensions;
+using System;
+using System.IO;
 
 namespace gOldCleaner.InfrastructureServices
 {
     public interface IStorageService
     {
-        IEnumerable<StorageItem> GetFiles(string folderItemFolderName, string searchPattern);
-        Result DeleteFile(StorageItem file);
+        string[] GetFiles(string folderItemFolderName, string searchPattern, SearchOption searchOption);
+        DateTime GetLastWriteTimeUtc(string filename);
+        long GetFileSize(string fileName);
+        string GetFileName(string fileName);
+        Result DeleteFile(string path);
         Result CleanEmptyFolders(string path);
     }
 }

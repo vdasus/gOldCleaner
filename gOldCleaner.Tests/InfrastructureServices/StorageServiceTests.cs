@@ -1,9 +1,8 @@
-﻿using System;
-using FluentAssertions;
+﻿using FluentAssertions;
 using gOldCleaner.InfrastructureServices;
+using System;
 using System.Collections.Generic;
 using System.IO;
-using System.IO.Abstractions;
 using System.IO.Abstractions.TestingHelpers;
 using System.Linq;
 using Xunit;

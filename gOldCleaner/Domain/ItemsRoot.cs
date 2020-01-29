@@ -9,18 +9,16 @@ namespace gOldCleaner.Domain
     public class ItemsRoot: IItemsRoot
     {
         private readonly IStorageService _storage;
-        private readonly IInformer _informer;
-
-        public ItemsRoot(IStorageService storage, IInformer informer)
+        
+        public ItemsRoot(IStorageService storage)
         {
             _storage = storage;
-            _informer = informer;
         }
 
         public FolderItem CreateFolderItem(string description, string path, TimeSpan deleteAfter, string searchPattern,
             bool isDeleteEmptyFolders)
         {
-            return new FolderItem(this, _informer, description, path, deleteAfter, searchPattern,
+            return new FolderItem(this, description, path, deleteAfter, searchPattern,
                 isDeleteEmptyFolders);
         }
 

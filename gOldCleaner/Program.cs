@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using CSharpFunctionalExtensions;
 
 namespace gOldCleaner
 {
@@ -17,7 +18,8 @@ namespace gOldCleaner
         private const string APP_DESCRIPTION = "Cleanup old files";
 
         private static bool _isRun;
-        
+        private static bool _isPauseOnExit;
+
         static int Main(string[] args)
         {
             var logger = CompositionRoot.Container.Resolve<ILogger>();
@@ -29,6 +31,7 @@ namespace gOldCleaner
             var p = new OptionSet
             {
                 {"r|run", "Go full prpocessing", v => _isRun = v != null},
+                {"p|pause-on-exit", "Pause on exit", v => _isPauseOnExit = v != null},
                 {"h|?|help", "show this message and exit.", v => help = v != null}
             };
             
@@ -48,10 +51,18 @@ namespace gOldCleaner
 
                 foreach (var folder in folders)
                 {
-                    folder.Cleanup();
+                    folder.Cleanup()
+                        .Tap(() => logger.Info($"{folder.FolderName} deleted"))
+                        .OnFailure(e =>
+                        {
+                            logger.Info(e);
+                            logger.Error(e);
+                        });
                 }
 
                 logger.Info("Done.");
+
+                if (_isPauseOnExit) Console.ReadKey();
 
                 return 0;
             }

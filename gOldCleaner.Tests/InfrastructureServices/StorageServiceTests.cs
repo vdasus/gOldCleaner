@@ -26,21 +26,14 @@ namespace gOldCleaner.Tests.InfrastructureServices
             sut.ToString("yyyy-MM-dd HH:mm:ss").Should().Be("2010-01-03 20:00:00");
         }
         
-        //TODO review functional
-        [Fact]
-        public void GetLastWriteTimeUtcWhenNotFound()
+        [Theory]
+        [InlineData(null, "[] not found")]
+        [InlineData(@"525DE403-8D8D-4E96-B8E1-7270F434D129.unk", "[525DE403-8D8D-4E96-B8E1-7270F434D129.unk] not found")]
+        public void GetLastWriteTimeUtcWhenNotFoundOrNull(string path, string err)
         {
-            var obj = new StorageService(new FileSystem(), null);
-            var sut = obj.GetLastWriteTimeUtc(@"525DE403-8D8D-4E96-B8E1-7270F434D129.unk");
-            sut.ToString("yyyy-MM-dd HH:mm:ss").Should().Be("1601-01-01 00:00:00");
-        }
-        
-        [Fact]
-        public void GetLastWriteTimeUtcWhenNull()
-        {
-            var obj = new StorageService(new FileSystem(), null);
-            Action sut = () => obj.GetLastWriteTimeUtc(null);
-            sut.Should().ThrowExactly<ArgumentNullException>().WithMessage("Value cannot be null.*");
+            var obj = new StorageService(new MockFileSystem(), null);
+            Action sut = () => obj.GetLastWriteTimeUtc(path);
+            sut.Should().ThrowExactly<FileNotFoundException>().WithMessage(err);
         }
         
         [Fact]
@@ -55,7 +48,17 @@ namespace gOldCleaner.Tests.InfrastructureServices
             var sut = obj.GetFileSize(@"c:\myfile.txt");
             sut.Should().Be(15L);
         }
-        
+
+        [Theory]
+        [InlineData(null, "[] not found")]
+        [InlineData(@"525DE403-8D8D-4E96-B8E1-7270F434D129.unk", "[525DE403-8D8D-4E96-B8E1-7270F434D129.unk] not found")]
+        public void GetFileSizeWhenNotFoundOrNull(string path, string err)
+        {
+            var obj = new StorageService(new MockFileSystem(), null);
+            Action sut = () => obj.GetFileSize(path);
+            sut.Should().ThrowExactly<FileNotFoundException>().WithMessage(err);
+        }
+
         [Fact]
         public void GetFileName()
         {
@@ -68,7 +71,17 @@ namespace gOldCleaner.Tests.InfrastructureServices
             var sut = obj.GetFileName(@"c:\myfile.txt");
             sut.Should().Be("myfile.txt");
         }
-        
+
+        [Theory]
+        [InlineData(null, "[] not found")]
+        [InlineData(@"525DE403-8D8D-4E96-B8E1-7270F434D129.unk", "[525DE403-8D8D-4E96-B8E1-7270F434D129.unk] not found")]
+        public void GetFileNameWhenNotFoundOrNull(string path, string err)
+        {
+            var obj = new StorageService(new MockFileSystem(), null);
+            Action sut = () => obj.GetFileName(path);
+            sut.Should().ThrowExactly<FileNotFoundException>().WithMessage(err);
+        }
+
         [Fact]
         public void GetFiles()
         {
@@ -92,6 +105,7 @@ namespace gOldCleaner.Tests.InfrastructureServices
             {
                 { @"c:\myfile.txt", new MockFileData("Testing is meh.") },
                 { @"c:\test2\", new MockDirectoryData() },
+                { @"c:\test3\", new MockDirectoryData() },
                 { @"c:\test\myfile.txt", new MockFileData("Testing is meh.") }
             });
 

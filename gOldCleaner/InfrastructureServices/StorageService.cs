@@ -19,16 +19,19 @@ namespace gOldCleaner.InfrastructureServices
 
         public DateTime GetLastWriteTimeUtc(string fileName)
         {
+            if(!_fs.File.Exists(fileName)) throw new FileNotFoundException($"[{fileName}] not found");
             return _fs.File.GetLastWriteTimeUtc(fileName);
         }
 
         public long GetFileSize(string fileName)
         {
+            if (!_fs.File.Exists(fileName)) throw new FileNotFoundException($"[{fileName}] not found");
             return _fs.FileInfo.FromFileName(fileName).Length;
         }
 
         public string GetFileName(string fileName)
         {
+            if (!_fs.File.Exists(fileName)) throw new FileNotFoundException($"[{fileName}] not found");
             return _fs.Path.GetFileName(fileName);
         }
 

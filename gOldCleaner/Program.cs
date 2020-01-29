@@ -52,7 +52,7 @@ namespace gOldCleaner
                 foreach (var folder in folders)
                 {
                     folder.Cleanup()
-                        .Tap(() => logger.Info($"{folder.FolderName} deleted"))
+                        .Tap(() => logger.Info($"{folder.FolderName} cleaned"))
                         .OnFailure(e =>
                         {
                             logger.Info(e);

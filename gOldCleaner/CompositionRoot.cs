@@ -18,9 +18,7 @@ namespace gOldCleaner
 
         private static void InitContainer()
         {
-            Container.Register<IStorageService, StorageService>();
-            
-            Container.Register<IInformer, Informer>(Reuse.Singleton);
+            Container.Register<IStorageService, StorageService>(Reuse.Singleton);
             Container.Register<IItemsRoot, ItemsRoot>(Reuse.Singleton);
             Container.Register<IFileSystem, FileSystem>(Reuse.Singleton);
             

@@ -67,8 +67,6 @@
     <Compile Include="Domain\FileItem.cs" />
     <Compile Include="Domain\FolderItem.cs" />
     <Compile Include="InfrastructureServices\StorageService.cs" />
-    <Compile Include="InfrastructureServices\IInformer.cs" />
-    <Compile Include="InfrastructureServices\Informer.cs" />
     <Compile Include="InfrastructureServices\IStorageService.cs" />
     <Compile Include="InfrastructureServices\NDeskOptions.cs" />
     <Compile Include="InfrastructureServices\Xml.cs" />
@@ -82,15 +80,16 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="gOldCleaner.exe.nlog">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>PublicSettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="ApplicationServices\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>if $(ConfigurationName) == Release $(SolutionDir)vrinc.exe -r -m0001 -f$(ProjectDir)Properties\AssemblyInfo.cs -t"AssemblyVersion\(\"(\d+)\.(\d+)\.(\d+)\.(\d+)\"\)"</PreBuildEvent>

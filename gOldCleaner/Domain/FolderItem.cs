@@ -1,13 +1,12 @@
 ﻿using CSharpFunctionalExtensions;
-using gOldCleaner.InfrastructureServices;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace gOldCleaner.Domain
 {
     public class FolderItem
     {
-        private readonly IInformer _informer;
         private readonly IItemsRoot _itemsFactory;
 
         public string Description { get; private set; }
@@ -20,10 +19,9 @@ namespace gOldCleaner.Domain
 
         private FolderItem() { }
 
-        internal FolderItem(IItemsRoot itemsRoot, IInformer informer, string description, string path, TimeSpan deleteAfter, string searchPattern, bool isDeleteEmptyFolders)
+        internal FolderItem(IItemsRoot itemsRoot, string description, string path, TimeSpan deleteAfter, string searchPattern, bool isDeleteEmptyFolders)
         {
             _itemsFactory = itemsRoot;
-            _informer = informer;
             Description = description ?? throw new ArgumentNullException(nameof(description));
             FolderName = path ?? throw new ArgumentNullException(nameof(path));
             DeleteAfter = deleteAfter;
@@ -33,24 +31,20 @@ namespace gOldCleaner.Domain
             Files = _itemsFactory.GetFileItems(path, searchPattern);
         }
 
-        public void Cleanup()
+        public Result Cleanup()
         {
+            var result = Result.Success();
+            Result.ErrorMessagesSeparator = "\n";
+
             var dateDeleteAfter = DateTime.UtcNow - DeleteAfter;
 
-            foreach (var file in Files)
-            {
-                if (file.LastWriteTimeUtc > dateDeleteAfter) continue;
-
-                var result = file.Delete()
-                    .OnFailure(_informer.Inform);
-                
-                if(result.IsSuccess) 
-                    _informer.Inform($"{file.Path} deleted");
-            }
+            result = Files.Where(file => file.LastWriteTimeUtc <= dateDeleteAfter)
+                .Aggregate(result, (current, file) => Result.Combine(current, file.Delete()));
 
             if (IsDeleteEmptyFolders)
-                _itemsFactory.CleanEmptyFolders(FolderName)
-                    .OnFailure(_informer.Inform);
+                result = Result.Combine(result, _itemsFactory.CleanEmptyFolders(FolderName));
+
+            return result;
         }
     }
 }

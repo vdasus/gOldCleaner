@@ -1,0 +1,20 @@
+﻿<nlog xmlns="http://www.nlog-project.org/schemas/NLog.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" autoReload="true">
+    <variable name="logDirectory" value="${basedir}/logs" />
+    <targets>
+      <target name="console" xsi:type="ColoredConsole" layout="${message}" />
+      <target name="console_ext" xsi:type="ColoredConsole" layout="${date:format=HH\:mm\:ss}|${level}|${stacktrace}|${message}" />
+      <target name="LogFileInOneFile" xsi:type="File" fileName="${logDirectory}/${date:format=yyyy-MM-dd}.log" layout="${longdate}|${pad:padding=5:inner=${level:uppercase=true}}|${message}|${exception:format=ToString,StackTrace}" />
+      <target name="LogFile" xsi:type="File" fileName="${logDirectory}/${date:format=yyyy-MM-dd}_${logger}.log" layout="${longdate}|${pad:padding=5:inner=${level:uppercase=true}}|${message}|${exception:format=ToString,StackTrace}" />
+      <target name="DebugFile" xsi:type="File" fileName="${logDirectory}/${date:format=yyyy-MM-dd}_${logger}_DEBUG.log" layout="${longdate}|${pad:padding=5:inner=${level:uppercase=true}}|${message}|${exception:format=ToString,StackTrace}" />
+      <target name="TraceFile" xsi:type="File" fileName="${logDirectory}/${date:format=yyyy-MM-dd}_${logger}_TRACE.log" layout="${longdate}|${pad:padding=5:inner=${level:uppercase=true}}|${message}|${exception:format=ToString,StackTrace}" />
+      <target name="FatalFile" xsi:type="File" fileName="${logDirectory}/${date:format=yyyy-MM-dd}_${logger}_FATAL.log" layout="${longdate}|${pad:padding=5:inner=${level:uppercase=true}}|${message}|${exception:format=ToString,StackTrace}" />
+    </targets>
+    <rules>
+      <logger name="*" minLevel="Info" maxLevel="Info" writeTo="console" />
+      <logger name="*" minLevel="Debug" writeTo="LogFileInOneFile" />
+      <!-- <logger name="*" minLevel="Info" writeTo="LogFile" />
+      <logger name="*" minLevel="Debug" writeTo="DebugFile" />
+      <logger name="*" minLevel="Fatal" writeTo="FatalFile" />
+      <logger name="*" minLevel="Trace" writeTo="TraceFile" /> -->
+    </rules>
+  </nlog>

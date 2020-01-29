@@ -7,12 +7,12 @@ namespace gOldCleaner.Domain
     public class FileItem
     {
         private readonly IStorageService _storage;
-        public string Path { get; private set; }
+        public string Path { get; }
         public string Name => _storage.GetFileName(Path);
         public DateTime LastWriteTimeUtc => _storage.GetLastWriteTimeUtc(Path);
         public long Size => _storage.GetFileSize(Path);
 
-        internal FileItem(IStorageService storage, string filePath)
+        public FileItem(IStorageService storage, string filePath)
         {
             _storage = storage ?? throw new ArgumentNullException(nameof(storage));
             Path = filePath ?? throw new ArgumentNullException(nameof(filePath));

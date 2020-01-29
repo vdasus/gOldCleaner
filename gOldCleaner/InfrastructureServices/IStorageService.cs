@@ -6,7 +6,8 @@ namespace gOldCleaner.InfrastructureServices
 {
     public interface IStorageService
     {
-        string[] GetFiles(string folderItemFolderName, string searchPattern, SearchOption searchOption);
+        string[] GetFiles(string folderItemFolderName, string searchPattern,
+            SearchOption searchOption);
         DateTime GetLastWriteTimeUtc(string filename);
         long GetFileSize(string fileName);
         string GetFileName(string fileName);

@@ -19,7 +19,7 @@ namespace gOldCleaner.Domain
 
         private FolderItem() { }
 
-        internal FolderItem(IItemsRoot itemsRoot, string description, string path, TimeSpan deleteAfter, string searchPattern, bool isDeleteEmptyFolders)
+        public FolderItem(IItemsRoot itemsRoot, string description, string path, TimeSpan deleteAfter, string searchPattern, bool isDeleteEmptyFolders)
         {
             _itemsFactory = itemsRoot;
             Description = description ?? throw new ArgumentNullException(nameof(description));

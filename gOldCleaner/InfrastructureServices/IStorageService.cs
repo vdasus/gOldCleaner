@@ -6,6 +6,9 @@ namespace gOldCleaner.InfrastructureServices
 {
     public interface IStorageService
     {
+        bool IsFileExists(string path);
+        bool IsDirectoryExists(string path);
+
         string[] GetFiles(string folderItemFolderName, string searchPattern,
             SearchOption searchOption);
         DateTime GetLastWriteTimeUtc(string filename);

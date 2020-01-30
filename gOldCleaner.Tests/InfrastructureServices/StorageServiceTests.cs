@@ -13,6 +13,32 @@ namespace gOldCleaner.Tests.InfrastructureServices
     public class StorageServiceTests
     {
         [Fact]
+        public void IsFileExists()
+        {
+            var fileSystem = new MockFileSystem(new Dictionary<string, MockFileData>
+            {
+                { @"c:\myfile.txt", new MockFileData("Testing is meh.") }
+            });
+
+            var obj = new StorageService(fileSystem, null);
+            var sut = obj.IsFileExists(@"c:\myfile.txt");
+            sut.Should().BeTrue();
+        }
+        
+        [Fact]
+        public void IsDirectoryExists()
+        {
+            var fileSystem = new MockFileSystem(new Dictionary<string, MockFileData>
+            {
+                { @"c:\temp\myfile.txt", new MockFileData("Testing is meh.") }
+            });
+
+            var obj = new StorageService(fileSystem, null);
+            var sut = obj.IsDirectoryExists(@"c:\temp");
+            sut.Should().BeTrue();
+        }
+        
+        [Fact]
         public void GetLastWriteTimeUtc()
         {
             var fileSystem = new MockFileSystem(new Dictionary<string, MockFileData>
@@ -58,27 +84,15 @@ namespace gOldCleaner.Tests.InfrastructureServices
             sut.Should().ThrowExactly<FileNotFoundException>().WithMessage(err);
         }
 
-        [Fact]
-        public void GetFileName()
-        {
-            var fileSystem = new MockFileSystem(new Dictionary<string, MockFileData>
-            {
-                { @"c:\myfile.txt", new MockFileData("Testing is meh.") }
-            });
-
-            var obj = new StorageService(fileSystem, null);
-            var sut = obj.GetFileName(@"c:\myfile.txt");
-            sut.Should().Be("myfile.txt");
-        }
-
         [Theory]
-        [InlineData(null, "[] not found")]
-        [InlineData(@"525DE403-8D8D-4E96-B8E1-7270F434D129.unk", "[525DE403-8D8D-4E96-B8E1-7270F434D129.unk] not found")]
-        public void GetFileNameWhenNotFoundOrNull(string path, string err)
+        [InlineData("","")]
+        [InlineData(null,null)]
+        [InlineData(@"c:\myfile.txt", "myfile.txt")]
+        public void GetFileName(string data, string result)
         {
             var obj = new StorageService(new MockFileSystem(), null);
-            Action sut = () => obj.GetFileName(path);
-            sut.Should().ThrowExactly<FileNotFoundException>().WithMessage(err);
+            var sut = obj.GetFileName(data);
+            sut.Should().Be(result);
         }
 
         [Fact]

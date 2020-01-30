@@ -1,35 +1,35 @@
-﻿using FluentAssertions;
+﻿using System;
+using AutoFixture;
+using FluentAssertions;
 using gOldCleaner.Domain;
-using gOldCleaner.InfrastructureServices;
-using System;
-using System.Collections.Generic;
-using System.IO.Abstractions.TestingHelpers;
-using System.Linq;
 using Xunit;
 
 namespace gOldCleaner.Tests.Domain
 {
+    [Trait("Common", "Unit Test")]
     public class FolderItemTests
     {
-        [Trait("Common", "Unit Test")]
         [Fact]
-        public void Cleanup()
+        public void ValidFolderItem()
         {
-            var fileSystem = new MockFileSystem(new Dictionary<string, MockFileData>
-            {
-                { @"c:\temp\myfile.txt", new MockFileData("Testing is meh.") },
-                { @"c:\temp\test\myfile.txt", new MockFileData("Testing is meh.") }
-            });
+            var fixture = new Fixture();
+            Action sut = () => { fixture.Create<FolderItem>(); };
+            sut.Should().NotThrow();
+        }
+        
+        [Theory]
+        [InlineData("1", "", "")]
+        [InlineData("", "1", "")]
+        [InlineData("", "", "1")]
+        [InlineData(null, "", "")]
+        [InlineData("", null, "")]
+        [InlineData("", "", null)]
+        public void InvalidFolderItem(string description, string folderPath, string searchPattern)
+        {
+            Action sut = () => new FolderItem(description, folderPath, searchPattern, TimeSpan.MinValue, true);
 
-            var isroot = new ItemsRoot(new StorageService(fileSystem, null));
+            sut.Should().ThrowExactly<ArgumentNullException>().WithMessage("Value cannot be null*");
 
-            var obj = new FolderItem(isroot, "test", @"c:\temp\", TimeSpan.FromDays(1), "*.txt", true);
-
-            var sut = obj.Cleanup();
-
-            sut.IsSuccess.Should().BeTrue();
-            fileSystem.AllFiles.Count().Should().Be(0);
-            //ASAP it must work fileSystem.AllDirectories.Count().Should().Be(0);
         }
     }
 }

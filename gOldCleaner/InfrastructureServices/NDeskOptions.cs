@@ -352,7 +352,7 @@ namespace gOldCleaner.InfrastructureServices
 
         internal string[] ValueSeparators { get; private set; }
 
-        static readonly char[] _nameTerminator = { '=', ':' };
+        static readonly char[] NameTerminator = { '=', ':' };
 
         private OptionValueType ParsePrototype()
         {
@@ -364,7 +364,7 @@ namespace gOldCleaner.InfrastructureServices
                 if (name.Length == 0)
                     throw new ArgumentException("Empty option names are not supported.", nameof(Prototype));
 
-                int end = name.IndexOfAny(_nameTerminator);
+                int end = name.IndexOfAny(NameTerminator);
                 if (end == -1)
                     continue;
                 Names[i] = name.Substring(0, end);

@@ -21,20 +21,27 @@ namespace gOldCleaner.DomainServices
 
         public Result Cleanup(FolderItem folder)
         {
-            Result.ErrorMessagesSeparator = "\n";
+            try
+            {
+                Result.ErrorMessagesSeparator = "\n";
 
-            var dateDeleteAfter = DateTime.UtcNow - folder.DeleteAfter;
-            var result = Result.Ok();
+                var dateDeleteAfter = DateTime.UtcNow - folder.DeleteAfter;
+                var result = Result.Ok();
 
-            var files = _storage.GetFiles(folder.FolderPath, folder.SearchPattern, SearchOption.AllDirectories);
+                var files = _storage.GetFiles(folder.FolderPath, folder.SearchPattern, SearchOption.AllDirectories);
 
-            result = files.Where(file => _storage.GetLastWriteTimeUtc(file) <= dateDeleteAfter)
-                .Aggregate(result, (current, file) => Result.Combine(current, _storage.DeleteFile(file)));
+                result = files.Where(file => _storage.GetLastWriteTimeUtc(file) <= dateDeleteAfter)
+                    .Aggregate(result, (current, file) => Result.Combine(current, _storage.DeleteFile(file)));
 
-            if (folder.IsDeleteEmptyFolders)
-                result = Result.Combine(result, _storage.CleanEmptyFolders(folder.FolderPath));
+                if (folder.IsDeleteEmptyFolders)
+                    result = Result.Combine(result, _storage.CleanEmptyFolders(folder.FolderPath));
 
-            return result;
+                return result;
+            }
+            catch (Exception ex)
+            {
+                return Result.Failure(ex.Message);
+            }
         }
     }
 }

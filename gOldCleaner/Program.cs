@@ -9,22 +9,25 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using CSharpFunctionalExtensions;
+using gOldCleaner.DomainServices;
 
 namespace gOldCleaner
 {
-    class Program
+    internal class Program
     {
         private const string APP_NAME = "gOldCleaner";
         private const string APP_DESCRIPTION = "Cleanup old files";
 
         private static bool _isRun;
         private static bool _isPauseOnExit;
+        
+        private static ILogger _logger;
 
         static int Main(string[] args)
         {
-            var logger = CompositionRoot.Container.Resolve<ILogger>();
+            _logger = CompositionRoot.Container.Resolve<ILogger>();
             
-            logger.Info(
+            _logger.Info(
                 $"{APP_NAME} v{System.Reflection.Assembly.GetExecutingAssembly().GetName().Version} type -h or --help or -? to see usage");
 
             var help = false;
@@ -48,19 +51,21 @@ namespace gOldCleaner
                 if (!_isRun) return 0;
 
                 var folders = MapFolders(Settings.Default.FolderList.XmlDeserializeFromString<List<FolderItemDto>>());
+                var fiSvc = CompositionRoot.Container.Resolve<IFolderItemService>();
 
                 foreach (var folder in folders)
                 {
-                    folder.Cleanup()
-                        .Tap(() => logger.Info($"{folder.FolderName} cleaned"))
+                    _logger.Trace($"Processing {folder.FolderPath}...");
+                    fiSvc.Cleanup(folder)
+                        .Tap(() => _logger.Info($"{folder.FolderPath} cleaned"))
                         .OnFailure(e =>
                         {
-                            logger.Info(e);
-                            logger.Error(e);
+                            _logger.Info(e);
+                            _logger.Error(e);
                         });
                 }
 
-                logger.Info("Done.");
+                _logger.Info("Done.");
 
                 if (_isPauseOnExit) Console.ReadKey();
 
@@ -68,7 +73,7 @@ namespace gOldCleaner
             }
             catch (Exception ex)
             {
-                logger.Error(ex);
+                _logger.Error(ex);
                 return 99;
             }
         }
@@ -84,10 +89,8 @@ namespace gOldCleaner
 
         public static IEnumerable<FolderItem> MapFolders(List<FolderItemDto> folders)
         {
-            var itemsRoot = CompositionRoot.Container.Resolve<IItemsRoot>();
             return folders.Select(folder =>
-                    itemsRoot.CreateFolderItem(folder.Description, folder.FolderName,
-                        ConvertStringToTimeSpan(folder.DeleteAfter), folder.SearchPattern, folder.IsDeleteEmptyFolders))
+                    new FolderItem(folder.Description, folder.FolderName, folder.SearchPattern, ConvertStringToTimeSpan(folder.DeleteAfter), folder.IsDeleteEmptyFolders))
                 .ToList();
         }
 

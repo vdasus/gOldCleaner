@@ -17,13 +17,25 @@ namespace gOldCleaner.InfrastructureServices
             _logger = logger;
         }
 
+        public bool IsFileExists(string path)
+        {
+            return _fs.File.Exists(path);
+        }
+
+        public bool IsDirectoryExists(string path)
+        {
+            return _fs.Directory.Exists(path);
+        }
+
         public DateTime GetLastWriteTimeUtc(string fileName)
         {
+            if(!_fs.File.Exists(fileName)) throw new FileNotFoundException($"[{fileName}] not found");
             return _fs.File.GetLastWriteTimeUtc(fileName);
         }
 
         public long GetFileSize(string fileName)
         {
+            if (!_fs.File.Exists(fileName)) throw new FileNotFoundException($"[{fileName}] not found");
             return _fs.FileInfo.FromFileName(fileName).Length;
         }
 

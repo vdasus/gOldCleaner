@@ -22,7 +22,7 @@ namespace gOldCleaner.Tests.DomainServices
                 { @"c:\temp\test\myfile.txt", new MockFileData("Testing is meh.") }
             });
 
-            var fiSvc = new FolderItemService(new StorageService(fileSystem, null), null);
+            var fiSvc = new FolderItemService(new StorageService(fileSystem, null));
 
             var data = new FolderItem("test", @"c:\temp\", "*.txt", TimeSpan.FromDays(1), true);
 

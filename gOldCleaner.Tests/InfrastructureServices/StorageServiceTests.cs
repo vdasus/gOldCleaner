@@ -107,8 +107,8 @@ namespace gOldCleaner.Tests.InfrastructureServices
             });
 
             var obj = new StorageService(fileSystem, null);
-            var sut = obj.GetFiles(@"c:\", "*.txt", SearchOption.AllDirectories);
-            sut.Length.Should().Be(3);
+            var sut = obj.EnumerateFiles(@"c:\", "*.txt", SearchOption.AllDirectories).ToList();
+            sut.Count.Should().Be(3);
         }
 
         [Fact]

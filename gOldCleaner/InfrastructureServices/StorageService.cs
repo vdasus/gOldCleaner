@@ -1,6 +1,7 @@
 ﻿using CSharpFunctionalExtensions;
 using NLog;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.IO.Abstractions;
 
@@ -44,16 +45,17 @@ namespace gOldCleaner.InfrastructureServices
             return _fs.Path.GetFileName(fileName);
         }
 
-        public string[] GetFiles(string folderItemFolderName, string searchPattern, SearchOption searchOption)
+        public IEnumerable<string> EnumerateFiles(string folderItemFolderName, string searchPattern,
+            SearchOption searchOption)
         {
-            return _fs.Directory.GetFiles(folderItemFolderName, searchPattern, searchOption);
+            return _fs.Directory.EnumerateFiles(folderItemFolderName, searchPattern, searchOption);
         }
 
         public Result CleanEmptyFolders(string path)
         {
             try
             {
-                foreach (var directory in _fs.Directory.GetDirectories(path))
+                foreach (var directory in _fs.Directory.EnumerateDirectories(path))
                 {
                     CleanEmptyFolders(directory);
                     if (_fs.Directory.GetFiles(directory).Length == 0 &&

@@ -1,46 +1,66 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using CSharpFunctionalExtensions;
 using gOldCleaner.Domain;
+using gOldCleaner.Dto;
 using gOldCleaner.InfrastructureServices;
-using NLog;
 
 namespace gOldCleaner.DomainServices
 {
     public class FolderItemService: IFolderItemService
     {
         private readonly IStorageService _storage;
-        private readonly ILogger _logger;
-        
-        public FolderItemService(IStorageService storage, ILogger logger)
+
+        public FolderItemService(IStorageService storage)
         {
             _storage = storage;
-            _logger = logger;
         }
 
         public Result Cleanup(FolderItem folder)
         {
-            try
+            Result.ErrorMessagesSeparator = "\n";
+
+            var dateDeleteAfter = DateTime.UtcNow - folder.DeleteAfter;
+            var result = Result.Ok();
+
+            var searchPattern = folder.SearchPattern.Split(',');
+            foreach (var oneSearchPattern in searchPattern)
             {
-                Result.ErrorMessagesSeparator = "\n";
-
-                var dateDeleteAfter = DateTime.UtcNow - folder.DeleteAfter;
-                var result = Result.Ok();
-
-                var files = _storage.GetFiles(folder.FolderPath, folder.SearchPattern, SearchOption.AllDirectories);
+                var files = _storage.EnumerateFiles(folder.FolderPath, oneSearchPattern, SearchOption.AllDirectories);
 
                 result = files.Where(file => _storage.GetLastWriteTimeUtc(file) <= dateDeleteAfter)
                     .Aggregate(result, (current, file) => Result.Combine(current, _storage.DeleteFile(file)));
-
-                if (folder.IsDeleteEmptyFolders)
-                    result = Result.Combine(result, _storage.CleanEmptyFolders(folder.FolderPath));
-
-                return result;
             }
-            catch (Exception ex)
+
+            //TODO move to separate method
+            if (folder.IsDeleteEmptyFolders)
+                result = Result.Combine(result, _storage.CleanEmptyFolders(folder.FolderPath));
+
+            return result;
+        }
+
+        public IEnumerable<FolderItem> MapFolders(List<FolderItemDto> folders)
+        {
+            return folders.Select(folder =>
+                    new FolderItem(folder.Description, folder.FolderPath, folder.SearchPattern, ConvertStringToTimeSpan(folder.DeleteAfter), folder.IsDeleteEmptyFolders))
+                .ToList();
+        }
+
+        public TimeSpan ConvertStringToTimeSpan(string timespanString)
+        {
+            var data = Regex.Match(timespanString, @"(\d+)(\w)");
+            var num = int.Parse(data.Groups[1].Value);
+            var term = data.Groups[2].Value.ToUpperInvariant();
+
+            switch (term)
             {
-                return Result.Failure(ex.Message);
+                case "D": return TimeSpan.FromDays(num);
+                case "H": return TimeSpan.FromHours(num);
+                case "M": return TimeSpan.FromMinutes(num);
+                default: throw new ArgumentException($"Bad {nameof(FolderItem.DeleteAfter)} parameter {num}{term}");
             }
         }
     }

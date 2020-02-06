@@ -1,5 +1,6 @@
 ﻿using CSharpFunctionalExtensions;
 using System;
+using System.Collections.Generic;
 using System.IO;
 
 namespace gOldCleaner.InfrastructureServices
@@ -9,7 +10,7 @@ namespace gOldCleaner.InfrastructureServices
         bool IsFileExists(string path);
         bool IsDirectoryExists(string path);
 
-        string[] GetFiles(string folderItemFolderName, string searchPattern,
+        IEnumerable<string> EnumerateFiles(string folderItemFolderName, string searchPattern,
             SearchOption searchOption);
         DateTime GetLastWriteTimeUtc(string filename);
         long GetFileSize(string fileName);

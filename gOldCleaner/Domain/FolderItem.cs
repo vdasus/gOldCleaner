@@ -2,7 +2,7 @@
 
 namespace gOldCleaner.Domain
 {
-    public class FolderItem
+    public sealed class FolderItem
     {
         public string Description { get; }
         public string FolderPath { get; }

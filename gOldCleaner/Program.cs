@@ -7,11 +7,10 @@ using gOldCleaner.Properties;
 using NLog;
 using System;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
 
 namespace gOldCleaner
 {
-    internal class Program
+    internal sealed class Program
     {
         private const string APP_NAME = "gOldCleaner";
         private const string APP_DESCRIPTION = "Cleanup old files";

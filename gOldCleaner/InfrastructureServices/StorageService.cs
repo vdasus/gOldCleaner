@@ -7,7 +7,7 @@ using System.IO.Abstractions;
 
 namespace gOldCleaner.InfrastructureServices
 {
-    public class StorageService: IStorageService
+    public sealed class StorageService: IStorageService
     {
         private readonly IFileSystem _fs;
         private readonly ILogger _logger;

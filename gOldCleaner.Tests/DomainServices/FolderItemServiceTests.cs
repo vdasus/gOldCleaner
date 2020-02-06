@@ -43,14 +43,16 @@ namespace gOldCleaner.Tests.DomainServices
         public void MapFolders()
         {
             var fixture = new Fixture();
-            var data = fixture.Build<FolderItemDto>().With(x => x.DeleteAfter, "5d").CreateMany(3).ToList();
+            var data = fixture.Build<FolderItemDto>().With(x => x.DeleteAfter, "5d").CreateMany(5).ToList();
 
             var obj = new FolderItemService(new Mock<IStorageService>().Object);
             var sut = obj.MapFolders(data).ToList();
 
-            sut.Count.Should().Be(3);
+            sut.Count.Should().Be(5);
             sut[0].Should().BeEquivalentTo(data[0], x=>x.Excluding(t=>t.DeleteAfter));
             sut[0].DeleteAfter.Should().Be(TimeSpan.FromDays(5));
+            sut[4].Should().BeEquivalentTo(data[4], x=>x.Excluding(t=>t.DeleteAfter));
+            sut[4].DeleteAfter.Should().Be(TimeSpan.FromDays(5));
         }
 
         [Theory]

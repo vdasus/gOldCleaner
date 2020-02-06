@@ -1,6 +1,6 @@
 ﻿namespace gOldCleaner.Dto
 {
-    public class FolderItemDto
+    public sealed class FolderItemDto
     {
         public string Description { get; set; }
         public string FolderPath { get; set; }

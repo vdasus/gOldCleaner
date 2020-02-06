@@ -352,7 +352,7 @@ namespace gOldCleaner.InfrastructureServices
 
         internal string[] ValueSeparators { get; private set; }
 
-        static readonly char[] NameTerminator = { '=', ':' };
+        private static readonly char[] NameTerminator = { '=', ':' };
 
         private OptionValueType ParsePrototype()
         {

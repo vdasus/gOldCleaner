@@ -10,7 +10,7 @@ using gOldCleaner.InfrastructureServices;
 
 namespace gOldCleaner.DomainServices
 {
-    public class FolderItemService: IFolderItemService
+    public sealed class FolderItemService: IFolderItemService
     {
         private readonly IStorageService _storage;
 

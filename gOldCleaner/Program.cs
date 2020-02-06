@@ -1,15 +1,13 @@
-﻿using DryIoc;
-using gOldCleaner.Domain;
+﻿using CSharpFunctionalExtensions;
+using DryIoc;
+using gOldCleaner.DomainServices;
 using gOldCleaner.Dto;
 using gOldCleaner.InfrastructureServices;
 using gOldCleaner.Properties;
 using NLog;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text.RegularExpressions;
-using CSharpFunctionalExtensions;
-using gOldCleaner.DomainServices;
+using System.Runtime.InteropServices;
 
 namespace gOldCleaner
 {
@@ -50,9 +48,9 @@ namespace gOldCleaner
 
                 if (!_isRun) return 0;
 
-                var folders = MapFolders(Settings.Default.FolderList.XmlDeserializeFromString<List<FolderItemDto>>());
                 var fiSvc = CompositionRoot.Container.Resolve<IFolderItemService>();
-
+                var folders = fiSvc.MapFolders(Settings.Default.FolderList.XmlDeserializeFromString<List<FolderItemDto>>());
+                
                 foreach (var folder in folders)
                 {
                     _logger.Trace($"Processing {folder.FolderPath}...");
@@ -85,28 +83,6 @@ namespace gOldCleaner
             Console.WriteLine(string.Empty);
             Console.WriteLine("Options:");
             p.WriteOptionDescriptions(Console.Out);
-        }
-
-        public static IEnumerable<FolderItem> MapFolders(List<FolderItemDto> folders)
-        {
-            return folders.Select(folder =>
-                    new FolderItem(folder.Description, folder.FolderName, folder.SearchPattern, ConvertStringToTimeSpan(folder.DeleteAfter), folder.IsDeleteEmptyFolders))
-                .ToList();
-        }
-
-        public static TimeSpan ConvertStringToTimeSpan(string timespanString)
-        {
-            var data = Regex.Match(timespanString, @"(\d+)(\w)");
-            var num = int.Parse(data.Groups[1].Value);
-            var term = data.Groups[2].Value.ToUpperInvariant();
-
-            switch (term)
-            {
-                case "D": return TimeSpan.FromDays(num);
-                case "M": return TimeSpan.FromMinutes(num);
-                case "H": return TimeSpan.FromHours(num);
-                default: throw new ArgumentException($"Bad {nameof(FolderItem.DeleteAfter)} parameter {num}{term}");
-            }
         }
     }
 }

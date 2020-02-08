@@ -17,12 +17,15 @@ namespace gOldCleaner.Tests.InfrastructureServices
         {
             var fileSystem = new MockFileSystem(new Dictionary<string, MockFileData>
             {
-                { @"c:\myfile.txt", new MockFileData("Testing is meh.") }
+                { @"c:\myfile.txt", new MockFileData("Data") }
             });
 
             var obj = new StorageService(fileSystem, null);
             var sut = obj.IsFileExists(@"c:\myfile.txt");
+            var sutNotExists = obj.IsFileExists(@"c:\525DE403-8D8D-4E96-B8E1-7270F434D129.txt");
+
             sut.Should().BeTrue();
+            sutNotExists.Should().BeFalse();
         }
         
         [Fact]
@@ -30,12 +33,15 @@ namespace gOldCleaner.Tests.InfrastructureServices
         {
             var fileSystem = new MockFileSystem(new Dictionary<string, MockFileData>
             {
-                { @"c:\temp\myfile.txt", new MockFileData("Testing is meh.") }
+                { @"c:\temp\myfile.txt", new MockFileData("Data") }
             });
 
             var obj = new StorageService(fileSystem, null);
             var sut = obj.IsDirectoryExists(@"c:\temp");
+            var sutDirNotExists = obj.IsDirectoryExists(@"c:\525DE403-8D8D-4E96-B8E1-7270F434D129");
+
             sut.Should().BeTrue();
+            sutDirNotExists.Should().BeFalse();
         }
         
         [Fact]
@@ -43,11 +49,12 @@ namespace gOldCleaner.Tests.InfrastructureServices
         {
             var fileSystem = new MockFileSystem(new Dictionary<string, MockFileData>
             {
-                { @"c:\myfile.txt", new MockFileData("Testing is meh.") }
+                { @"c:\myfile.txt", new MockFileData("Data") }
             });
 
             var obj = new StorageService(fileSystem, null);
             var sut = obj.GetLastWriteTimeUtc(@"c:\myfile.txt");
+
             sut.ToString("yyyy-MM-dd HH:mm:ss").Should().Be("2010-01-03 20:00:00");
         }
         
@@ -58,6 +65,7 @@ namespace gOldCleaner.Tests.InfrastructureServices
         {
             var obj = new StorageService(new MockFileSystem(), null);
             Action sut = () => obj.GetLastWriteTimeUtc(path);
+
             sut.Should().ThrowExactly<FileNotFoundException>().WithMessage(err);
         }
         
@@ -66,12 +74,13 @@ namespace gOldCleaner.Tests.InfrastructureServices
         {
             var fileSystem = new MockFileSystem(new Dictionary<string, MockFileData>
             {
-                { @"c:\myfile.txt", new MockFileData("Testing is meh.") }
+                { @"c:\myfile.txt", new MockFileData("Data") }
             });
 
             var obj = new StorageService(fileSystem, null);
             var sut = obj.GetFileSize(@"c:\myfile.txt");
-            sut.Should().Be(15L);
+
+            sut.Should().Be(4L);
         }
 
         [Theory]
@@ -81,6 +90,7 @@ namespace gOldCleaner.Tests.InfrastructureServices
         {
             var obj = new StorageService(new MockFileSystem(), null);
             Action sut = () => obj.GetFileSize(path);
+
             sut.Should().ThrowExactly<FileNotFoundException>().WithMessage(err);
         }
 
@@ -92,6 +102,7 @@ namespace gOldCleaner.Tests.InfrastructureServices
         {
             var obj = new StorageService(new MockFileSystem(), null);
             var sut = obj.GetFileName(data);
+
             sut.Should().Be(result);
         }
 
@@ -100,14 +111,15 @@ namespace gOldCleaner.Tests.InfrastructureServices
         {
             var fileSystem = new MockFileSystem(new Dictionary<string, MockFileData>
             {
-                { @"c:\myfile.txt", new MockFileData("Testing is meh.") },
-                { @"c:\myfile1.tt", new MockFileData("Testing is meh1.") },
-                { @"c:\myfile2.txt", new MockFileData("Testing is meh2.") },
-                { @"c:\test\myfile.txt", new MockFileData("Testing is meh.") }
+                { @"c:\myfile.txt", new MockFileData("Data") },
+                { @"c:\myfile1.tt", new MockFileData("Data1.") },
+                { @"c:\myfile2.txt", new MockFileData("Data2.") },
+                { @"c:\test\myfile.txt", new MockFileData("Data") }
             });
 
             var obj = new StorageService(fileSystem, null);
             var sut = obj.EnumerateFiles(@"c:\", "*.txt", SearchOption.AllDirectories).ToList();
+
             sut.Count.Should().Be(3);
         }
 
@@ -116,10 +128,10 @@ namespace gOldCleaner.Tests.InfrastructureServices
         {
             var fileSystem = new MockFileSystem(new Dictionary<string, MockFileData>
             {
-                { @"c:\myfile.txt", new MockFileData("Testing is meh.") },
+                { @"c:\myfile.txt", new MockFileData("Data") },
                 { @"c:\test2\", new MockDirectoryData() },
                 { @"c:\test3\", new MockDirectoryData() },
-                { @"c:\test\myfile.txt", new MockFileData("Testing is meh.") }
+                { @"c:\test\myfile.txt", new MockFileData("Data") }
             });
 
             var obj = new StorageService(fileSystem, null);
@@ -136,8 +148,8 @@ namespace gOldCleaner.Tests.InfrastructureServices
         {
             var fileSystem = new MockFileSystem(new Dictionary<string, MockFileData>
             {
-                { @"c:\myfile.txt", new MockFileData("Testing is meh.") },
-                { @"c:\myfile1.tt", new MockFileData("Testing is meh1.") }
+                { @"c:\myfile.txt", new MockFileData("Data") },
+                { @"c:\myfile1.tt", new MockFileData("Data1.") }
             });
 
             var obj = new StorageService(fileSystem, null);
@@ -145,6 +157,7 @@ namespace gOldCleaner.Tests.InfrastructureServices
             
             sut.IsSuccess.Should().BeTrue();
             fileSystem.AllFiles.Count().Should().Be(1);
+            fileSystem.File.Exists(@"c:\myfile.txt").Should().BeFalse();
         }
     }
 }

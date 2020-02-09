@@ -19,6 +19,7 @@ namespace gOldCleaner
         private static bool _isPauseOnExit;
         
         private static ILogger _logger;
+        private static bool _isTestRun;
 
         static int Main(string[] args)
         {
@@ -32,6 +33,7 @@ namespace gOldCleaner
             {
                 {"r|run", "Go full prpocessing", v => _isRun = v != null},
                 {"p|pause-on-exit", "Pause on exit", v => _isPauseOnExit = v != null},
+                {"t|test-run", "Just log, no real file processing", v => _isTestRun = v != null},
                 {"h|?|help", "show this message and exit.", v => help = v != null}
             };
             
@@ -47,6 +49,8 @@ namespace gOldCleaner
 
                 if (!_isRun) return 0;
 
+                RegisterStorage(_isTestRun);
+                
                 var fiSvc = CompositionRoot.Container.Resolve<IFolderItemService>();
                 var folders = fiSvc.MapFolders(Settings.Default.FolderList.XmlDeserializeFromString<List<FolderItemDto>>());
                 
@@ -82,6 +86,14 @@ namespace gOldCleaner
             Console.WriteLine(string.Empty);
             Console.WriteLine("Options:");
             p.WriteOptionDescriptions(Console.Out);
+        }
+
+        private static void RegisterStorage(bool isFake)
+        {
+            if (isFake)
+                CompositionRoot.Container.Register<IStorageService, FakeStorageService>(Reuse.Singleton);
+            else
+                CompositionRoot.Container.Register<IStorageService, StorageService>(Reuse.Singleton);
         }
     }
 }

@@ -10,13 +10,15 @@ using gOldCleaner.InfrastructureServices;
 
 namespace gOldCleaner.DomainServices
 {
-    public sealed class FolderItemService: IFolderItemService
+    public sealed class FolderItemService : IFolderItemService
     {
         private readonly IStorageService _storage;
+        private readonly IInformer _informer;
 
-        public FolderItemService(IStorageService storage)
+        public FolderItemService(IStorageService storage, IInformer informer)
         {
             _storage = storage;
+            _informer = informer;
         }
 
         public Result Cleanup(FolderItem folder)
@@ -31,13 +33,28 @@ namespace gOldCleaner.DomainServices
             {
                 var files = _storage.EnumerateFiles(folder.FolderPath, oneSearchPattern, SearchOption.AllDirectories);
 
-                result = files.Where(file => _storage.GetLastWriteTimeUtc(file) <= dateDeleteAfter)
-                    .Aggregate(result, (current, file) => Result.Combine(current, _storage.DeleteFile(file)));
+                foreach (var file in files)
+                {
+                    if (_storage.GetLastWriteTimeUtc(file) <= dateDeleteAfter)
+                    {
+                        var isok = _storage.DeleteFile(file);
+                        result = Result.Combine(result, isok);
+                        _informer?.Inform(isok.IsSuccess ? "-" : "E");
+
+                    }
+                    else
+                        _informer?.Inform(".");
+                }
             }
 
             //TODO move to separate method
             if (folder.IsDeleteEmptyFolders)
-                result = Result.Combine(result, _storage.CleanEmptyFolders(folder.FolderPath));
+            {
+                var isok = _storage.CleanEmptyFolders(folder.FolderPath);
+                result = Result.Combine(result, isok);
+                _informer?.Inform("D");
+            }
+
 
             return result;
         }

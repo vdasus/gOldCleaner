@@ -21,22 +21,44 @@ namespace gOldCleaner.Tests.DomainServices
         {
             var fileSystem = new MockFileSystem(new Dictionary<string, MockFileData>
             {
-                { @"c:\temp\myfile.txt", new MockFileData("Testing is meh.") },
-                { @"c:\temp\test\test\myfile.txt", new MockFileData("Testing is meh.") },
-                { @"c:\temp\test\myfile.txt", new MockFileData("Testing is meh.") },
-                { @"c:\temp\test\myfile.log", new MockFileData("Testing is meh.") },
-                { @"c:\temp\myfile.log", new MockFileData("Testing is meh.") }
+                { @"c:\temp\myfile.txt", new MockFileData("Data") },
+                { @"c:\temp\test\test\myfile.txt", new MockFileData("Data") },
+                { @"c:\temp\test\myfile.txt", new MockFileData("Data") },
+                { @"c:\temp\test\myfile.log", new MockFileData("Data") },
+                { @"c:\temp\myfile.log", new MockFileData("Data") }
             });
 
-            var fiSvc = new FolderItemService(new StorageService(fileSystem, null));
-
             var data = new FolderItem("test", @"c:\temp\", "*.txt", TimeSpan.FromDays(1), true);
+
+            var fiSvc = new FolderItemService(new StorageService(fileSystem, null), null);
 
             var sut = fiSvc.Cleanup(data);
 
             sut.IsSuccess.Should().BeTrue();
             fileSystem.AllFiles.Count().Should().Be(2);
             fileSystem.AllDirectories.Count().Should().Be(3);
+        }
+        
+        [Fact]
+        public void CleanupInform()
+        {
+            var fileSystem = new MockFileSystem(new Dictionary<string, MockFileData>
+            {
+                { @"c:\temp\myfile.txt", new MockFileData("Data") },
+                { @"c:\temp\test\test\myfile.txt", new MockFileData("Data")},
+                { @"c:\temp\test\myfile.txt", new MockFileData("Data") },
+                { @"c:\temp\test\myfile.log", new MockFileData("Data") },
+                { @"c:\temp\myfile.log", new MockFileData("Data") }
+            });
+
+            var data = new FolderItem("test", @"c:\temp\", "*.txt", TimeSpan.FromDays(1), true);
+
+            var informer = new Mock<IInformer>();
+            var fiSvc = new FolderItemService(new StorageService(fileSystem, null), informer.Object);
+
+            var sut = fiSvc.Cleanup(data);
+
+            informer.Verify(x=>x.Inform("-"), Times.Exactly(3));
         }
 
         [Fact]
@@ -45,7 +67,7 @@ namespace gOldCleaner.Tests.DomainServices
             var fixture = new Fixture();
             var data = fixture.Build<FolderItemDto>().With(x => x.DeleteAfter, "5d").CreateMany(5).ToList();
 
-            var obj = new FolderItemService(new Mock<IStorageService>().Object);
+            var obj = new FolderItemService(new Mock<IStorageService>().Object, null);
             var sut = obj.MapFolders(data).ToList();
 
             sut.Count.Should().Be(5);
@@ -61,7 +83,7 @@ namespace gOldCleaner.Tests.DomainServices
         [InlineData("7m", 7)]
         public void ConvertStringToTimeSpan(string str, double rez)
         {
-            var obj = new FolderItemService(new Mock<IStorageService>().Object);
+            var obj = new FolderItemService(new Mock<IStorageService>().Object, null);
             var sut = obj.ConvertStringToTimeSpan(str);
             sut.Should().Be(TimeSpan.FromMinutes(rez));
         }

@@ -57,13 +57,8 @@ namespace gOldCleaner
                 foreach (var folder in folders)
                 {
                     _logger.Trace($"Processing {folder.FolderPath}...");
-                    fiSvc.Cleanup(folder)
-                        .Tap(() => _logger.Info($"{folder.FolderPath} cleaned"))
-                        .OnFailure(e =>  { _logger.Error(e); });
-                    
-                    fiSvc.DeleteEmptyFolders(folder)
-                        .Tap(() => _logger.Info($"Empty folders in {folder.FolderPath} cleaned"))
-                        .OnFailure(e => { _logger.Error(e); });
+                    fiSvc.Cleanup(folder);
+                    fiSvc.DeleteEmptyFolders(folder);
                 }
 
                 _logger.Info("Done.");

@@ -10,13 +10,15 @@ using gOldCleaner.InfrastructureServices;
 
 namespace gOldCleaner.DomainServices
 {
-    public sealed class FolderItemService: IFolderItemService
+    public sealed class FolderItemService : IFolderItemService
     {
         private readonly IStorageService _storage;
+        private readonly IInformer _informer;
 
-        public FolderItemService(IStorageService storage)
+        public FolderItemService(IStorageService storage, IInformer informer = null)
         {
             _storage = storage;
+            _informer = informer;
         }
 
         public Result Cleanup(FolderItem folder)
@@ -27,17 +29,49 @@ namespace gOldCleaner.DomainServices
             var result = Result.Ok();
 
             var searchPattern = folder.SearchPattern.Split(',');
+
             foreach (var oneSearchPattern in searchPattern)
             {
-                var files = _storage.EnumerateFiles(folder.FolderPath, oneSearchPattern, SearchOption.AllDirectories);
+                try
+                {
+                    var files = _storage.EnumerateFiles(folder.FolderPath, oneSearchPattern,
+                        SearchOption.AllDirectories);
+                    foreach (var file in files)
+                    {
+                        if (_storage.GetLastWriteTimeUtc(file) <= dateDeleteAfter)
+                        {
+                            var isok = _storage.DeleteFile(file);
+                            result = Result.Combine(result, isok);
+                            _informer?.Inform(isok.IsSuccess ? "-" : "E");
+                            _informer?.LogDebug(isok.IsSuccess ? $"deleted {file}" : isok.Error);
 
-                result = files.Where(file => _storage.GetLastWriteTimeUtc(file) <= dateDeleteAfter)
-                    .Aggregate(result, (current, file) => Result.Combine(current, _storage.DeleteFile(file)));
+                        }
+                        else
+                        {
+                            _informer?.Inform(".");
+                            _informer?.LogTrace($"skipped {file}");
+                        }
+ }
+                }
+                catch(Exception ex)
+                {
+                    _informer?.Inform("E");
+                    _informer?.LogError(ex.Message);
+                }
             }
 
-            //TODO move to separate method
+            return result;
+        }
+
+        public Result DeleteEmptyFolders(FolderItem folder)
+        {
+            var result = Result.Ok();
             if (folder.IsDeleteEmptyFolders)
+            {
                 result = Result.Combine(result, _storage.CleanEmptyFolders(folder.FolderPath));
+                _informer?.Inform("D");
+                _informer?.LogDebug($"folder {folder.FolderPath} cleaned up");
+            }
 
             return result;
         }

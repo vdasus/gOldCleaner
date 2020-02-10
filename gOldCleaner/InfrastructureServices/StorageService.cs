@@ -7,61 +7,59 @@ using System.IO.Abstractions;
 
 namespace gOldCleaner.InfrastructureServices
 {
-    public sealed class StorageService: IStorageService
+    public class StorageService : IStorageService
     {
-        private readonly IFileSystem _fs;
-        private readonly ILogger _logger;
+        protected readonly IFileSystem Fs;
         
-        public StorageService(IFileSystem fs, ILogger logger)
+        public StorageService(IFileSystem fs)
         {
-            _fs = fs;
-            _logger = logger;
+            Fs = fs;
         }
 
         public bool IsFileExists(string path)
         {
-            return _fs.File.Exists(path);
+            return Fs.File.Exists(path);
         }
 
         public bool IsDirectoryExists(string path)
         {
-            return _fs.Directory.Exists(path);
+            return Fs.Directory.Exists(path);
         }
 
         public DateTime GetLastWriteTimeUtc(string fileName)
         {
-            if(!_fs.File.Exists(fileName)) throw new FileNotFoundException($"[{fileName}] not found");
-            return _fs.File.GetLastWriteTimeUtc(fileName);
+            if (!Fs.File.Exists(fileName)) throw new FileNotFoundException($"[{fileName}] not found");
+            return Fs.File.GetLastWriteTimeUtc(fileName);
         }
 
         public long GetFileSize(string fileName)
         {
-            if (!_fs.File.Exists(fileName)) throw new FileNotFoundException($"[{fileName}] not found");
-            return _fs.FileInfo.FromFileName(fileName).Length;
+            if (!Fs.File.Exists(fileName)) throw new FileNotFoundException($"[{fileName}] not found");
+            return Fs.FileInfo.FromFileName(fileName).Length;
         }
 
         public string GetFileName(string fileName)
         {
-            return _fs.Path.GetFileName(fileName);
+            return Fs.Path.GetFileName(fileName);
         }
 
         public IEnumerable<string> EnumerateFiles(string folderItemFolderName, string searchPattern,
             SearchOption searchOption)
         {
-            return _fs.Directory.EnumerateFiles(folderItemFolderName, searchPattern, searchOption);
+            return Fs.Directory.EnumerateFiles(folderItemFolderName, searchPattern, searchOption).SkipExceptions();
         }
 
-        public Result CleanEmptyFolders(string path)
+        public virtual Result CleanEmptyFolders(string path)
         {
             try
             {
-                foreach (var directory in _fs.Directory.EnumerateDirectories(path))
+                foreach (var directory in Fs.Directory.EnumerateDirectories(path).SkipExceptions())
                 {
                     CleanEmptyFolders(directory);
-                    if (_fs.Directory.GetFiles(directory).Length == 0 &&
-                        _fs.Directory.GetDirectories(directory).Length == 0)
+                    if (Fs.Directory.GetFiles(directory).Length == 0 &&
+                        Fs.Directory.GetDirectories(directory).Length == 0)
                     {
-                        _fs.Directory.Delete(directory, false);
+                        Fs.Directory.Delete(directory, false);
                     }
                 }
 
@@ -69,21 +67,19 @@ namespace gOldCleaner.InfrastructureServices
             }
             catch (Exception ex)
             {
-                _logger.Error(ex);
                 return Result.Failure(ex.Message);
             }
         }
 
-        public Result DeleteFile(string path)
+        public virtual Result DeleteFile(string path)
         {
             try
             {
-                _fs.File.Delete(path);
+                Fs.File.Delete(path);
                 return Result.Success();
             }
             catch (Exception ex)
             {
-                _logger.Error(ex);
                 return Result.Failure(ex.Message);
             }
         }

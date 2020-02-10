@@ -72,11 +72,15 @@
     <Compile Include="CompositionRoot.cs" />
     <Compile Include="DomainServices\FolderItemService.cs" />
     <Compile Include="DomainServices\IFolderItemService.cs" />
+    <Compile Include="InfrastructureServices\IInformer.cs" />
+    <Compile Include="InfrastructureServices\Informer.cs" />
     <Compile Include="Dto\FolderItemDto.cs" />
     <Compile Include="Domain\FolderItem.cs" />
+    <Compile Include="InfrastructureServices\FakeStorageService.cs" />
     <Compile Include="InfrastructureServices\StorageService.cs" />
     <Compile Include="InfrastructureServices\IStorageService.cs" />
     <Compile Include="InfrastructureServices\NDeskOptions.cs" />
+    <Compile Include="InfrastructureServices\StorageServiceExtensions.cs" />
     <Compile Include="InfrastructureServices\Xml.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

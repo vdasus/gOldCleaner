@@ -21,22 +21,66 @@ namespace gOldCleaner.Tests.DomainServices
         {
             var fileSystem = new MockFileSystem(new Dictionary<string, MockFileData>
             {
-                { @"c:\temp\myfile.txt", new MockFileData("Testing is meh.") },
-                { @"c:\temp\test\test\myfile.txt", new MockFileData("Testing is meh.") },
-                { @"c:\temp\test\myfile.txt", new MockFileData("Testing is meh.") },
-                { @"c:\temp\test\myfile.log", new MockFileData("Testing is meh.") },
-                { @"c:\temp\myfile.log", new MockFileData("Testing is meh.") }
+                { @"c:\temp\myfile.txt", new MockFileData("Data") },
+                { @"c:\temp\test\test\myfile.txt", new MockFileData("Data") },
+                { @"c:\temp\test\myfile.txt", new MockFileData("Data") },
+                { @"c:\temp\test\myfile.log", new MockFileData("Data") },
+                { @"c:\temp\myfile.log", new MockFileData("Data") }
             });
-
-            var fiSvc = new FolderItemService(new StorageService(fileSystem, null));
 
             var data = new FolderItem("test", @"c:\temp\", "*.txt", TimeSpan.FromDays(1), true);
 
+            var fiSvc = new FolderItemService(new StorageService(fileSystem));
+
             var sut = fiSvc.Cleanup(data);
+            
+            sut.IsSuccess.Should().BeTrue();
+            fileSystem.AllFiles.Count().Should().Be(2);
+            fileSystem.AllDirectories.Count().Should().Be(4);
+        }
+        
+        [Fact]
+        public void DeleteEmptyFolders()
+        {
+            var fileSystem = new MockFileSystem(new Dictionary<string, MockFileData>
+            {
+                { @"c:\temp\myfile.txt", new MockFileData("Data") },
+                { @"c:\temp\testemty", new MockDirectoryData() },
+                { @"c:\temp\testemty2", new MockDirectoryData() },
+                { @"c:\temp\test\myfile.txt", new MockFileData("Data") }
+            });
+
+            var data = new FolderItem("test", @"c:\temp\", "*.txt", TimeSpan.FromDays(1), true);
+
+            var fiSvc = new FolderItemService(new StorageService(fileSystem));
+
+            var sut = fiSvc.DeleteEmptyFolders(data);
 
             sut.IsSuccess.Should().BeTrue();
             fileSystem.AllFiles.Count().Should().Be(2);
             fileSystem.AllDirectories.Count().Should().Be(3);
+        }
+        
+        [Fact]
+        public void CleanupInform()
+        {
+            var fileSystem = new MockFileSystem(new Dictionary<string, MockFileData>
+            {
+                { @"c:\temp\myfile.txt", new MockFileData("Data") },
+                { @"c:\temp\test\test\myfile.txt", new MockFileData("Data")},
+                { @"c:\temp\test\myfile.txt", new MockFileData("Data") },
+                { @"c:\temp\test\myfile.log", new MockFileData("Data") },
+                { @"c:\temp\myfile.log", new MockFileData("Data") }
+            });
+
+            var data = new FolderItem("test", @"c:\temp\", "*.txt", TimeSpan.FromDays(1), true);
+
+            var informer = new Mock<IInformer>();
+            var fiSvc = new FolderItemService(new StorageService(fileSystem), informer.Object);
+
+            var sut = fiSvc.Cleanup(data);
+
+            informer.Verify(x=>x.Inform("-"), Times.Exactly(3));
         }
 
         [Fact]

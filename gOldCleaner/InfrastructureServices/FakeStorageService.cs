@@ -7,8 +7,11 @@ namespace gOldCleaner.InfrastructureServices
 {
     public sealed class FakeStorageService : StorageService
     {
-        public FakeStorageService(IFileSystem fs, ILogger logger) : base(fs, logger)
+        private readonly ILogger _logger;
+
+        public FakeStorageService(IFileSystem fs, ILogger logger) : base(fs)
         {
+            _logger = logger;
         }
 
         public override Result CleanEmptyFolders(string path)
@@ -21,7 +24,7 @@ namespace gOldCleaner.InfrastructureServices
                     if (Fs.Directory.GetFiles(directory).Length == 0 &&
                         Fs.Directory.GetDirectories(directory).Length == 0)
                     {
-                        Logger.Info($"Directory.Delete({directory}, false)");
+                        _logger.Info($"Directory.Delete({directory})");
                     }
                 }
 
@@ -29,7 +32,7 @@ namespace gOldCleaner.InfrastructureServices
             }
             catch (Exception ex)
             {
-                Logger?.Error(ex);
+                _logger?.Error(ex);
                 return Result.Failure(ex.Message);
             }
         }
@@ -37,7 +40,7 @@ namespace gOldCleaner.InfrastructureServices
         public override Result DeleteFile(string path)
         {
 
-            Logger.Info($"File.Delete({path});");
+            _logger.Info($"File.Delete({path});");
 
             return Result.Success();
         }

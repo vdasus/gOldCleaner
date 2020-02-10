@@ -3,10 +3,10 @@ using DryIoc;
 using gOldCleaner.DomainServices;
 using gOldCleaner.Dto;
 using gOldCleaner.InfrastructureServices;
-using gOldCleaner.Properties;
 using NLog;
 using System;
 using System.Collections.Generic;
+using static gOldCleaner.Properties.Settings;
 
 namespace gOldCleaner
 {
@@ -52,18 +52,18 @@ namespace gOldCleaner
                 RegisterStorage(_isTestRun);
                 
                 var fiSvc = CompositionRoot.Container.Resolve<IFolderItemService>();
-                var folders = fiSvc.MapFolders(Settings.Default.FolderList.XmlDeserializeFromString<List<FolderItemDto>>());
+                var folders = fiSvc.MapFolders(Default.FolderList.XmlDeserializeFromString<List<FolderItemDto>>());
                 
                 foreach (var folder in folders)
                 {
                     _logger.Trace($"Processing {folder.FolderPath}...");
                     fiSvc.Cleanup(folder)
                         .Tap(() => _logger.Info($"{folder.FolderPath} cleaned"))
-                        .OnFailure(e =>
-                        {
-                            _logger.Info(e);
-                            _logger.Error(e);
-                        });
+                        .OnFailure(e =>  { _logger.Error(e); });
+                    
+                    fiSvc.DeleteEmptyFolders(folder)
+                        .Tap(() => _logger.Info($"Empty folders in {folder.FolderPath} cleaned"))
+                        .OnFailure(e => { _logger.Error(e); });
                 }
 
                 _logger.Info("Done.");

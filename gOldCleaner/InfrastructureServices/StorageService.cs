@@ -10,12 +10,10 @@ namespace gOldCleaner.InfrastructureServices
     public class StorageService : IStorageService
     {
         protected readonly IFileSystem Fs;
-        protected readonly ILogger Logger;
-
-        public StorageService(IFileSystem fs, ILogger logger)
+        
+        public StorageService(IFileSystem fs)
         {
             Fs = fs;
-            Logger = logger;
         }
 
         public bool IsFileExists(string path)
@@ -45,19 +43,17 @@ namespace gOldCleaner.InfrastructureServices
             return Fs.Path.GetFileName(fileName);
         }
 
-        //ASAP bad solution, stops on UnauthorizedAccessException 
         public IEnumerable<string> EnumerateFiles(string folderItemFolderName, string searchPattern,
             SearchOption searchOption)
         {
-            return Fs.Directory.EnumerateFiles(folderItemFolderName, searchPattern, searchOption).SafeWalk();
+            return Fs.Directory.EnumerateFiles(folderItemFolderName, searchPattern, searchOption).SkipExceptions();
         }
 
-        //ASAP bad solution, stops on UnauthorizedAccessException 
         public virtual Result CleanEmptyFolders(string path)
         {
             try
             {
-                foreach (var directory in Fs.Directory.EnumerateDirectories(path).SafeWalk())
+                foreach (var directory in Fs.Directory.EnumerateDirectories(path).SkipExceptions())
                 {
                     CleanEmptyFolders(directory);
                     if (Fs.Directory.GetFiles(directory).Length == 0 &&
@@ -71,7 +67,6 @@ namespace gOldCleaner.InfrastructureServices
             }
             catch (Exception ex)
             {
-                Logger?.Error(ex);
                 return Result.Failure(ex.Message);
             }
         }
@@ -85,7 +80,6 @@ namespace gOldCleaner.InfrastructureServices
             }
             catch (Exception ex)
             {
-                Logger?.Error(ex);
                 return Result.Failure(ex.Message);
             }
         }

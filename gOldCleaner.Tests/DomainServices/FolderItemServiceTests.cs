@@ -30,9 +30,31 @@ namespace gOldCleaner.Tests.DomainServices
 
             var data = new FolderItem("test", @"c:\temp\", "*.txt", TimeSpan.FromDays(1), true);
 
-            var fiSvc = new FolderItemService(new StorageService(fileSystem, null), null);
+            var fiSvc = new FolderItemService(new StorageService(fileSystem));
 
             var sut = fiSvc.Cleanup(data);
+            
+            sut.IsSuccess.Should().BeTrue();
+            fileSystem.AllFiles.Count().Should().Be(2);
+            fileSystem.AllDirectories.Count().Should().Be(4);
+        }
+        
+        [Fact]
+        public void DeleteEmptyFolders()
+        {
+            var fileSystem = new MockFileSystem(new Dictionary<string, MockFileData>
+            {
+                { @"c:\temp\myfile.txt", new MockFileData("Data") },
+                { @"c:\temp\testemty", new MockDirectoryData() },
+                { @"c:\temp\testemty2", new MockDirectoryData() },
+                { @"c:\temp\test\myfile.txt", new MockFileData("Data") }
+            });
+
+            var data = new FolderItem("test", @"c:\temp\", "*.txt", TimeSpan.FromDays(1), true);
+
+            var fiSvc = new FolderItemService(new StorageService(fileSystem));
+
+            var sut = fiSvc.DeleteEmptyFolders(data);
 
             sut.IsSuccess.Should().BeTrue();
             fileSystem.AllFiles.Count().Should().Be(2);
@@ -54,7 +76,7 @@ namespace gOldCleaner.Tests.DomainServices
             var data = new FolderItem("test", @"c:\temp\", "*.txt", TimeSpan.FromDays(1), true);
 
             var informer = new Mock<IInformer>();
-            var fiSvc = new FolderItemService(new StorageService(fileSystem, null), informer.Object);
+            var fiSvc = new FolderItemService(new StorageService(fileSystem), informer.Object);
 
             var sut = fiSvc.Cleanup(data);
 
@@ -67,7 +89,7 @@ namespace gOldCleaner.Tests.DomainServices
             var fixture = new Fixture();
             var data = fixture.Build<FolderItemDto>().With(x => x.DeleteAfter, "5d").CreateMany(5).ToList();
 
-            var obj = new FolderItemService(new Mock<IStorageService>().Object, null);
+            var obj = new FolderItemService(new Mock<IStorageService>().Object);
             var sut = obj.MapFolders(data).ToList();
 
             sut.Count.Should().Be(5);
@@ -83,7 +105,7 @@ namespace gOldCleaner.Tests.DomainServices
         [InlineData("7m", 7)]
         public void ConvertStringToTimeSpan(string str, double rez)
         {
-            var obj = new FolderItemService(new Mock<IStorageService>().Object, null);
+            var obj = new FolderItemService(new Mock<IStorageService>().Object);
             var sut = obj.ConvertStringToTimeSpan(str);
             sut.Should().Be(TimeSpan.FromMinutes(rez));
         }

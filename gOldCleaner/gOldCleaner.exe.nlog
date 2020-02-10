@@ -11,7 +11,7 @@
     </targets>
     <rules>
       <logger name="*" minLevel="Info" maxLevel="Info" writeTo="console" />
-      <logger name="*" minLevel="Trace" writeTo="LogFileInOneFile" />
+      <logger name="*" minLevel="Debug" writeTo="LogFileInOneFile" />
       <!-- <logger name="*" minLevel="Info" writeTo="LogFile" />
       <logger name="*" minLevel="Debug" writeTo="DebugFile" />
       <logger name="*" minLevel="Fatal" writeTo="FatalFile" />

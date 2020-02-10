@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using CSharpFunctionalExtensions;
 using gOldCleaner.Domain;
 using gOldCleaner.Dto;
@@ -9,7 +8,7 @@ namespace gOldCleaner.DomainServices
     public interface IFolderItemService
     {
         Result Cleanup(FolderItem folder);
+        Result DeleteEmptyFolders(FolderItem folder);
         IEnumerable<FolderItem> MapFolders(List<FolderItemDto> folders);
-        TimeSpan ConvertStringToTimeSpan(string timespanString);
     }
 }

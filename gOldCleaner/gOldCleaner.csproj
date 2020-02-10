@@ -80,7 +80,7 @@
     <Compile Include="InfrastructureServices\StorageService.cs" />
     <Compile Include="InfrastructureServices\IStorageService.cs" />
     <Compile Include="InfrastructureServices\NDeskOptions.cs" />
-    <Compile Include="InfrastructureServices\StorageServicesExtensions.cs" />
+    <Compile Include="InfrastructureServices\StorageServiceExtensions.cs" />
     <Compile Include="InfrastructureServices\Xml.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -1,5 +1,4 @@
-﻿using CSharpFunctionalExtensions;
-using DryIoc;
+﻿using DryIoc;
 using gOldCleaner.DomainServices;
 using gOldCleaner.Dto;
 using gOldCleaner.InfrastructureServices;
@@ -56,7 +55,6 @@ namespace gOldCleaner
                 
                 foreach (var folder in folders)
                 {
-                    _logger.Trace($"Processing {folder.FolderPath}...");
                     fiSvc.Cleanup(folder);
                     fiSvc.DeleteEmptyFolders(folder);
                 }

@@ -23,6 +23,8 @@ namespace gOldCleaner.DomainServices
 
         public Result Cleanup(FolderItem folder)
         {
+            _informer?.LogDebug($"Processing {folder.FolderPath}...");
+
             Result.ErrorMessagesSeparator = "\n";
 
             var dateDeleteAfter = DateTime.UtcNow - folder.DeleteAfter;

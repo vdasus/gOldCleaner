@@ -115,6 +115,7 @@
     <Compile Include="Domain\FolderItemTests.cs" />
     <Compile Include="InfrastructureServices\FakeStorageServiceTests.cs" />
     <Compile Include="InfrastructureServices\InformerTests.cs" />
+    <Compile Include="InfrastructureServices\StorageServiceExtensionsTests.cs" />
     <Compile Include="InfrastructureServices\StorageServiceTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

@@ -117,6 +117,7 @@
     <Compile Include="InfrastructureServices\InformerTests.cs" />
     <Compile Include="InfrastructureServices\StorageServiceExtensionsTests.cs" />
     <Compile Include="InfrastructureServices\StorageServiceTests.cs" />
+    <Compile Include="InfrastructureServices\XmlTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

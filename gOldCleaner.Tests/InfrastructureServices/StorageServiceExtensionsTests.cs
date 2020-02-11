@@ -1,7 +1,9 @@
 ﻿using FluentAssertions;
 using gOldCleaner.InfrastructureServices;
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.IO.Abstractions.TestingHelpers;
 using Xunit;
 
 namespace gOldCleaner.Tests.InfrastructureServices
@@ -10,13 +12,23 @@ namespace gOldCleaner.Tests.InfrastructureServices
     public class StorageServiceExtensionsTests
     {
         [Fact]
-        //TODO Bad test, try to solve with abstract fs permissions
         public void ExceptionsNotThrown()
         {
-            var files = Directory.EnumerateFiles(@"C:\Windows\System32", "*.*", SearchOption.AllDirectories).SkipExceptions();
+            const string FILE = @"c:\myfile.txt";
 
-            Action sut = () => { foreach (var file in files) { } };
+            var fileSystem = new MockFileSystem(new Dictionary<string, MockFileData>
+            {
+                {FILE, new MockFileData("Data") {Attributes = FileAttributes.Hidden}}
+            });
+            
+            var files = Directory.EnumerateFiles(fileSystem.Path.GetPathRoot(FILE), "*.*", SearchOption.AllDirectories);
 
+            Action sutNotSafe = () => { foreach (var file in files) { } };
+            Action sut = () => { foreach (var file in files.SkipExceptions()) { } };
+
+            sutNotSafe.Should().ThrowExactly<UnauthorizedAccessException>();
+
+            sut.Should().NotThrow<UnauthorizedAccessException>();
             sut.Should().NotThrow();
         }
     }

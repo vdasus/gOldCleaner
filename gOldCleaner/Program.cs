@@ -48,7 +48,7 @@ namespace gOldCleaner
 
                 if (!_isRun) return 0;
 
-                RegisterStorage(_isTestRun);
+                CompositionRoot.BuildStorage(_isTestRun);
                 
                 var fiSvc = CompositionRoot.Container.Resolve<IFolderItemService>();
                 var folders = fiSvc.MapFolders(Default.FolderList.XmlDeserializeFromString<List<FolderItemDto>>());
@@ -79,14 +79,6 @@ namespace gOldCleaner
             Console.WriteLine(string.Empty);
             Console.WriteLine("Options:");
             p.WriteOptionDescriptions(Console.Out);
-        }
-
-        private static void RegisterStorage(bool isFake)
-        {
-            if (isFake)
-                CompositionRoot.Container.Register<IStorageService, FakeStorageService>(Reuse.Singleton);
-            else
-                CompositionRoot.Container.Register<IStorageService, StorageService>(Reuse.Singleton);
         }
     }
 }

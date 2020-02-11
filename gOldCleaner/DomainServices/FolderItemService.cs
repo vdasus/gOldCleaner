@@ -87,8 +87,12 @@ namespace gOldCleaner.DomainServices
 
         public TimeSpan ConvertStringToTimeSpan(string timespanString)
         {
-            var data = Regex.Match(timespanString, @"(\d+)(\w)");
-            var num = int.Parse(data.Groups[1].Value);
+            var errorString = $"Bad {nameof(FolderItem.DeleteAfter)} parameter {timespanString}. \\d+(D|H|M) only allowed";
+
+            var data = Regex.Match(timespanString, @"^(\d+)(\w)$");
+            if(data.Groups.Count<2) throw new ArgumentException(errorString);
+
+            var num = int.Parse(data.Groups[1]?.Value);
             var term = data.Groups[2].Value.ToUpperInvariant();
 
             switch (term)
@@ -96,7 +100,7 @@ namespace gOldCleaner.DomainServices
                 case "D": return TimeSpan.FromDays(num);
                 case "H": return TimeSpan.FromHours(num);
                 case "M": return TimeSpan.FromMinutes(num);
-                default: throw new ArgumentException($"Bad {nameof(FolderItem.DeleteAfter)} parameter {num}{term}");
+                default: throw new ArgumentException(errorString);
             }
         }
     }

@@ -2,7 +2,6 @@
 using gOldCleaner.InfrastructureServices;
 using NLog;
 using System.IO.Abstractions;
-using System.Runtime.InteropServices;
 using gOldCleaner.DomainServices;
 
 namespace gOldCleaner

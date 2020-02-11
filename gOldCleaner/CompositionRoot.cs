@@ -2,6 +2,7 @@
 using gOldCleaner.InfrastructureServices;
 using NLog;
 using System.IO.Abstractions;
+using System.Runtime.InteropServices;
 using gOldCleaner.DomainServices;
 
 namespace gOldCleaner
@@ -14,6 +15,14 @@ namespace gOldCleaner
         static CompositionRoot()
         {
             InitContainer();
+        }
+
+        public static void BuildStorage(bool isFakeFs)
+        {
+            if (isFakeFs)
+                Container.Register<IStorageService, FakeStorageService>(Reuse.Singleton);
+            else
+                Container.Register<IStorageService, StorageService>(Reuse.Singleton);
         }
 
         private static void InitContainer()

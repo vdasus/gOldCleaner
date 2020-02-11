@@ -27,7 +27,7 @@ namespace gOldCleaner.Tests.InfrastructureServices
             sut.Should().BeTrue();
             sutNotExists.Should().BeFalse();
         }
-        
+
         [Fact]
         public void IsDirectoryExists()
         {
@@ -43,21 +43,24 @@ namespace gOldCleaner.Tests.InfrastructureServices
             sut.Should().BeTrue();
             sutDirNotExists.Should().BeFalse();
         }
-        
+
         [Fact]
         public void GetLastWriteTimeUtc()
         {
             var fileSystem = new MockFileSystem(new Dictionary<string, MockFileData>
             {
-                { @"c:\myfile.txt", new MockFileData("Data") }
+                {
+                    @"c:\myfile.txt",
+                    new MockFileData("Data") { LastWriteTime = DateTime.Parse("2020-02-11 19:52").ToUniversalTime() }
+                }
             });
 
             var obj = new StorageService(fileSystem);
             var sut = obj.GetLastWriteTimeUtc(@"c:\myfile.txt");
 
-            sut.ToString("yyyy-MM-dd HH:mm:ss").Should().Be("2010-01-03 20:00:00");
+            sut.Should().Be(DateTime.Parse("2020-02-11 19:52").ToUniversalTime());
         }
-        
+
         [Theory]
         [InlineData(null, "[] not found")]
         [InlineData(@"525DE403-8D8D-4E96-B8E1-7270F434D129.unk", "[525DE403-8D8D-4E96-B8E1-7270F434D129.unk] not found")]
@@ -68,7 +71,7 @@ namespace gOldCleaner.Tests.InfrastructureServices
 
             sut.Should().ThrowExactly<FileNotFoundException>().WithMessage(err);
         }
-        
+
         [Fact]
         public void GetFileSize()
         {
@@ -95,8 +98,8 @@ namespace gOldCleaner.Tests.InfrastructureServices
         }
 
         [Theory]
-        [InlineData("","")]
-        [InlineData(null,null)]
+        [InlineData("", "")]
+        [InlineData(null, null)]
         [InlineData(@"c:\myfile.txt", "myfile.txt")]
         public void GetFileName(string data, string result)
         {
@@ -137,7 +140,7 @@ namespace gOldCleaner.Tests.InfrastructureServices
             var obj = new StorageService(fileSystem);
 
             var sut = obj.CleanEmptyFolders(@"c:\");
-            
+
             sut.IsSuccess.Should().BeTrue();
             fileSystem.AllDirectories.Count().Should().Be(2);
             fileSystem.AllFiles.Count().Should().Be(2);
@@ -154,7 +157,7 @@ namespace gOldCleaner.Tests.InfrastructureServices
 
             var obj = new StorageService(fileSystem);
             var sut = obj.DeleteFile(@"c:\myfile.txt");
-            
+
             sut.IsSuccess.Should().BeTrue();
             fileSystem.AllFiles.Count().Should().Be(1);
             fileSystem.File.Exists(@"c:\myfile.txt").Should().BeFalse();

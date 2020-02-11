@@ -16,6 +16,13 @@ namespace gOldCleaner.Tests.DomainServices
     [Trait("Common", "Unit Test")]
     public class FolderItemServiceTests
     {
+        private readonly Fixture _fixture;
+
+        public FolderItemServiceTests()
+        {
+            _fixture = new Fixture();
+        }
+
         [Fact]
         public void Cleanup()
         {
@@ -108,6 +115,18 @@ namespace gOldCleaner.Tests.DomainServices
             var obj = new FolderItemService(new Mock<IStorageService>().Object);
             var sut = obj.ConvertStringToTimeSpan(str);
             sut.Should().Be(TimeSpan.FromMinutes(rez));
+        }
+        
+        [Theory]
+        [InlineData("5char_not_D_H_M")]
+        [InlineData("Not_a_digit_first")]
+        [InlineData("5u")]
+        public void ConvertStringToTimeSpanInvalid(string data)
+        {
+            var obj = new FolderItemService(new Mock<IStorageService>().Object);
+            Action sut = () => obj.ConvertStringToTimeSpan(data);
+
+            sut.Should().ThrowExactly<ArgumentException>().WithMessage("Bad DeleteAfter parameter*");
         }
     }
 }

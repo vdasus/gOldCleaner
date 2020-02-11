@@ -1,14 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO.Abstractions.TestingHelpers;
-using System.Linq;
-using AutoFixture;
+﻿using AutoFixture;
 using FluentAssertions;
 using gOldCleaner.Domain;
 using gOldCleaner.DomainServices;
 using gOldCleaner.Dto;
 using gOldCleaner.InfrastructureServices;
 using Moq;
+using System;
+using System.Collections.Generic;
+using System.IO.Abstractions.TestingHelpers;
+using System.Linq;
 using Xunit;
 
 namespace gOldCleaner.Tests.DomainServices
@@ -16,13 +16,6 @@ namespace gOldCleaner.Tests.DomainServices
     [Trait("Common", "Unit Test")]
     public class FolderItemServiceTests
     {
-        private readonly Fixture _fixture;
-
-        public FolderItemServiceTests()
-        {
-            _fixture = new Fixture();
-        }
-
         [Fact]
         public void Cleanup()
         {

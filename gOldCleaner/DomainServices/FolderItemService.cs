@@ -53,6 +53,15 @@ namespace gOldCleaner.DomainServices
             return result;
         }
 
+        public IEnumerable<FolderItem> MapFolders(List<FolderItemDto> folders)
+        {
+            return folders.Select(folder =>
+                    new FolderItem(folder.Description, folder.FolderPath, folder.SearchPattern, ConvertStringToTimeSpan(folder.DeleteAfter), folder.IsDeleteEmptyFolders))
+                .ToList();
+        }
+
+        #region privates
+
         private Result CleanFolderBySearchPattern(FolderItem folder, string oneSearchPattern, DateTime dateDeleteAfter)
         {
             var result = Result.Success();
@@ -95,13 +104,6 @@ namespace gOldCleaner.DomainServices
             return result;
         }
 
-        public IEnumerable<FolderItem> MapFolders(List<FolderItemDto> folders)
-        {
-            return folders.Select(folder =>
-                    new FolderItem(folder.Description, folder.FolderPath, folder.SearchPattern, ConvertStringToTimeSpan(folder.DeleteAfter), folder.IsDeleteEmptyFolders))
-                .ToList();
-        }
-
         private TimeSpan ConvertStringToTimeSpan(string timespanString)
         {
             var errorString = $"Bad {nameof(FolderItem.DeleteAfter)} parameter {timespanString}. \\d+(D|H|M) only allowed";
@@ -120,5 +122,7 @@ namespace gOldCleaner.DomainServices
                 default: throw new ArgumentException(errorString);
             }
         }
+
+        #endregion
     }
 }

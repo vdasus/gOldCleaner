@@ -5,7 +5,8 @@ using gOldCleaner.InfrastructureServices;
 using NLog;
 using System;
 using System.Collections.Generic;
-using static gOldCleaner.Properties.Settings;
+using System.IO;
+using Microsoft.Extensions.Configuration;
 
 namespace gOldCleaner
 {
@@ -23,7 +24,13 @@ namespace gOldCleaner
         static int Main(string[] args)
         {
             _logger = CompositionRoot.Container.Resolve<ILogger>();
-            
+
+            var builder = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("gOldCleaner.exe.json");
+
+            var config = builder.Build();
+
             _logger.Info(
                 $"{APP_NAME} v{System.Reflection.Assembly.GetExecutingAssembly().GetName().Version} type -h or --help or -? to see usage");
 
@@ -51,7 +58,8 @@ namespace gOldCleaner
                 CompositionRoot.BuildStorage(_isTestRun);
                 
                 var fiSvc = CompositionRoot.Container.Resolve<IFolderItemService>();
-                var folders = fiSvc.MapFolders(Default.FolderList.XmlDeserializeFromString<List<FolderItemDto>>());
+
+                var folders = fiSvc.MapFolders(config.GetSection("FolderList").Get<List<FolderItemDto>>());
                 
                 foreach (var folder in folders)
                 {

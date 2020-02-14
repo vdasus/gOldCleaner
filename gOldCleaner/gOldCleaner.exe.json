@@ -1,0 +1,11 @@
+{
+  "FolderList": [
+    {
+      "Description": "temp",
+      "FolderPath": "C:\\TEMP",
+      "DeleteAfter": "30d",
+      "SearchPattern": "*.*",
+      "IsDeleteEmptyFolders": true
+    }
+  ]
+}

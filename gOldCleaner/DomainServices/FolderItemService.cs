@@ -85,7 +85,7 @@ namespace gOldCleaner.DomainServices
                 .ToList();
         }
 
-        public TimeSpan ConvertStringToTimeSpan(string timespanString)
+        private TimeSpan ConvertStringToTimeSpan(string timespanString)
         {
             var errorString = $"Bad {nameof(FolderItem.DeleteAfter)} parameter {timespanString}. \\d+(D|H|M) only allowed";
 

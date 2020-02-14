@@ -67,6 +67,7 @@ namespace gOldCleaner
             }
             catch (Exception ex)
             {
+                _logger.Info(ex.Message);
                 _logger.Error(ex);
                 return 99;
             }

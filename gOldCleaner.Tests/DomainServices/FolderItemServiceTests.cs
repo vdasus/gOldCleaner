@@ -33,12 +33,12 @@ namespace gOldCleaner.Tests.DomainServices
             var fiSvc = new FolderItemService(new StorageService(fileSystem));
 
             var sut = fiSvc.Cleanup(data);
-            
+
             sut.IsSuccess.Should().BeTrue();
             fileSystem.AllFiles.Count().Should().Be(2);
             fileSystem.AllDirectories.Count().Should().Be(4);
         }
-        
+
         [Fact]
         public void DeleteEmptyFolders()
         {
@@ -60,7 +60,7 @@ namespace gOldCleaner.Tests.DomainServices
             fileSystem.AllFiles.Count().Should().Be(2);
             fileSystem.AllDirectories.Count().Should().Be(3);
         }
-        
+
         [Fact]
         public void CleanupInform()
         {
@@ -80,46 +80,41 @@ namespace gOldCleaner.Tests.DomainServices
 
             var sut = fiSvc.Cleanup(data);
 
-            informer.Verify(x=>x.Inform("-"), Times.Exactly(3));
+            informer.Verify(x => x.Inform("-"), Times.Exactly(3));
         }
 
-        [Fact]
-        public void MapFolders()
+        [Theory]
+        [InlineData("5d", 5 * 60 * 24)]
+        [InlineData("6h", 6 * 60)]
+        [InlineData("7m", 7)]
+        public void MapFoldersValid(string timespan, double rez)
         {
             var fixture = new Fixture();
-            var data = fixture.Build<FolderItemDto>().With(x => x.DeleteAfter, "5d").CreateMany(5).ToList();
+            var data = fixture.Build<FolderItemDto>().With(x => x.DeleteAfter, timespan).CreateMany(5).ToList();
 
             var obj = new FolderItemService(new Mock<IStorageService>().Object);
             var sut = obj.MapFolders(data).ToList();
 
             sut.Count.Should().Be(5);
-            sut[0].Should().BeEquivalentTo(data[0], x=>x.Excluding(t=>t.DeleteAfter));
-            sut[0].DeleteAfter.Should().Be(TimeSpan.FromDays(5));
-            sut[4].Should().BeEquivalentTo(data[4], x=>x.Excluding(t=>t.DeleteAfter));
-            sut[4].DeleteAfter.Should().Be(TimeSpan.FromDays(5));
-        }
-
-        [Theory]
-        [InlineData("5d", 5*60*24)]
-        [InlineData("6h", 6*60)]
-        [InlineData("7m", 7)]
-        public void ConvertStringToTimeSpan(string str, double rez)
-        {
-            var obj = new FolderItemService(new Mock<IStorageService>().Object);
-            var sut = obj.ConvertStringToTimeSpan(str);
-            sut.Should().Be(TimeSpan.FromMinutes(rez));
+            sut[0].Should().BeEquivalentTo(data[0], x => x.Excluding(t => t.DeleteAfter));
+            sut[0].DeleteAfter.Should().Be(TimeSpan.FromMinutes(rez));
+            sut[4].Should().BeEquivalentTo(data[4], x => x.Excluding(t => t.DeleteAfter));
+            sut[4].DeleteAfter.Should().Be(TimeSpan.FromMinutes(rez));
         }
         
         [Theory]
         [InlineData("5char_not_D_H_M")]
         [InlineData("Not_a_digit_first")]
         [InlineData("5u")]
-        public void ConvertStringToTimeSpanInvalid(string data)
+        public void MapFoldersInvalid(string timespan)
         {
-            var obj = new FolderItemService(new Mock<IStorageService>().Object);
-            Action sut = () => obj.ConvertStringToTimeSpan(data);
+            var fixture = new Fixture();
+            var data = fixture.Build<FolderItemDto>().With(x => x.DeleteAfter, timespan).CreateMany(5).ToList();
 
-            sut.Should().ThrowExactly<ArgumentException>().WithMessage("Bad DeleteAfter parameter*");
+            var obj = new FolderItemService(new Mock<IStorageService>().Object);
+            Action sut = () => obj.MapFolders(data).ToList();
+
+            sut.Should().ThrowExactly<ArgumentException>().WithMessage($"Bad DeleteAfter parameter {timespan}*");
         }
     }
 }

@@ -23,7 +23,7 @@ namespace gOldCleaner.DomainServices
 
         public Result Cleanup(FolderItem folder)
         {
-            _informer?.LogDebug($"Processing {folder.FolderPath}...");
+            _informer?.LogDebug($"Processing {folder.Description} : {folder.FolderPath}...");
 
             Result.ErrorMessagesSeparator = "\n";
 
@@ -62,6 +62,7 @@ namespace gOldCleaner.DomainServices
                 }
             }
 
+            _informer?.LogDebug($"Done {folder.Description} : {folder.FolderPath}");
             return result;
         }
 
@@ -72,7 +73,7 @@ namespace gOldCleaner.DomainServices
             {
                 result = Result.Combine(result, _storage.CleanEmptyFolders(folder.FolderPath));
                 _informer?.Inform("D");
-                _informer?.LogDebug($"folder {folder.FolderPath} cleaned up");
+                _informer?.LogDebug($"folder {folder.Description} : {folder.FolderPath} cleaned up");
             }
 
             return result;

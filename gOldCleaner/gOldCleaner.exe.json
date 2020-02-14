@@ -6,13 +6,6 @@
       "DeleteAfter": "30d",
       "SearchPattern": "*.*",
       "IsDeleteEmptyFolders": true
-    },
-    {
-      "Description": "temp2",
-      "FolderPath": "C:\\TEMP2",
-      "DeleteAfter": "30d",
-      "SearchPattern": "*.*",
-      "IsDeleteEmptyFolders": false
     }
   ]
 }

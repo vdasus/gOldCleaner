@@ -3,8 +3,8 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <OutputType>Exe</OutputType>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <AssemblyVersion>1.0.0.11</AssemblyVersion>
-    <Version>1.0.0.11</Version>
+    <AssemblyVersion>1.0.0.29</AssemblyVersion>
+    <Version>1.0.0.29</Version>
   </PropertyGroup>
   <ItemGroup>
     <None Update="gOldCleaner.exe.json">
@@ -47,7 +47,19 @@
     <None Remove="gOldCleaner.v3.ncrunchproject" />
     <None Remove="gOldCleaner.~v" />
   </ItemGroup>
-  <PropertyGroup />
+
+<Target Name="PrepublishScript" BeforeTargets="PrepareForPublish">
+  <ItemGroup>
+    <ConfigFiles Include="$(ProjectDir)gOldCleaner.exe.json" />
+    <ConfigFiles Include="$(ProjectDir)gOldCleaner.exe.nlog" />
+  </ItemGroup>
+  <Copy SourceFiles="@(ConfigFiles)" DestinationFolder="$(PublishDir)" SkipUnchangedFiles="false" />
+</Target>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DebugType>none</DebugType>
+    <DebugSymbols>false</DebugSymbols>
+  </PropertyGroup>
   <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
     <Exec Command="if $(ConfigurationName) ==Release $(SolutionDir)vrinc.exe -r -m0001 -f $(ProjectPath) -t &quot;Version&gt;(\d+)\.(\d+)\.(\d+)\.(\d+)&lt;/&quot;" />
   </Target>

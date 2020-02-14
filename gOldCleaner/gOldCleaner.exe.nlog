@@ -1,5 +1,5 @@
 ﻿<nlog xmlns="http://www.nlog-project.org/schemas/NLog.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" autoReload="true">
-  <variable name="logDirectory" value="${basedir}/logs" />
+  <variable name="logDirectory" value="${basedir:fixtempdir=true}/logs" />
   <targets>
     <target name="console" xsi:type="ColoredConsole" layout="${message}" />
     <target name="LogFileInOneFile" xsi:type="File" fileName="${logDirectory}/${date:format=yyyy-MM-dd}.log" layout="${longdate}|${pad:padding=5:inner=${level:uppercase=true}}|${message}|${exception:format=ToString,StackTrace}" />

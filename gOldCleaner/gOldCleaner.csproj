@@ -3,8 +3,8 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <OutputType>Exe</OutputType>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <AssemblyVersion>1.0.0.7</AssemblyVersion>
-    <Version>1.0.0.7</Version>
+    <AssemblyVersion>1.0.0.9</AssemblyVersion>
+    <Version>1.0.0.9</Version>
   </PropertyGroup>
   <ItemGroup>
     <None Update="gOldCleaner.exe.json">

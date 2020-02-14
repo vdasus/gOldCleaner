@@ -1,4 +1,4 @@
-﻿using AutoFixture;
+using AutoFixture;
 using FluentAssertions;
 using gOldCleaner.InfrastructureServices;
 using Xunit;
@@ -8,20 +8,13 @@ namespace gOldCleaner.Tests.InfrastructureServices
     [Trait("Common", "Unit Test")]
     public class XmlTests
     {
-        private readonly Fixture _fixture;
-
-        public XmlTests()
-        {
-            _fixture = new Fixture();
-        }
-
         [Fact]
         public void SerializeToXmlStringIndented()
         {
 
             var (obj, xml) = CreateTestData();
 
-            var sut = obj.SerializeToXmlStringIndented<TestData>();
+            var sut = obj.SerializeToPlainXmlString<TestData>();
 
             sut.Should().Be(xml);
         }
@@ -38,11 +31,12 @@ namespace gOldCleaner.Tests.InfrastructureServices
 
         private (TestData testData, string xml) CreateTestData()
         {
-            var id = _fixture.Create<int>();
-            var name = _fixture.Create<string>();
+            var fixture = new Fixture();
+
+            var id = fixture.Create<int>();
+            var name = fixture.Create<string>();
             var testData = new TestData {Id = id, Name = name};
-            var xml = $@"<?xml version=""1.0"" encoding=""utf-16""?>
-<TestData xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xmlns:xsd=""http://www.w3.org/2001/XMLSchema"">
+            var xml = $@"<TestData>
   <Id>{id}</Id>
   <Name>{name}</Name>
 </TestData>";

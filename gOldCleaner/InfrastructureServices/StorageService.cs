@@ -42,19 +42,19 @@ namespace gOldCleaner.InfrastructureServices
             return Fs.Path.GetFileName(fileName);
         }
 
-        public IEnumerable<string> EnumerateFiles(string folderItemFolderName, string searchPattern,
+        public IEnumerable<string> SafeEnumerateFiles(string folderItemFolderName, string searchPattern,
             SearchOption searchOption)
         {
             return Fs.Directory.EnumerateFiles(folderItemFolderName, searchPattern, searchOption).SkipExceptions();
         }
 
-        public virtual Result CleanEmptyFolders(string path)
+        public virtual Result SafeCleanEmptyFolders(string path)
         {
             try
             {
                 foreach (var directory in Fs.Directory.EnumerateDirectories(path).SkipExceptions())
                 {
-                    CleanEmptyFolders(directory);
+                    SafeCleanEmptyFolders(directory);
                     if (Fs.Directory.GetFiles(directory).Length == 0 &&
                         Fs.Directory.GetDirectories(directory).Length == 0)
                     {

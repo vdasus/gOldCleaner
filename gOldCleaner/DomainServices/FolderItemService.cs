@@ -45,7 +45,7 @@ namespace gOldCleaner.DomainServices
             var result = Result.Success();
             if (!folder.IsDeleteEmptyFolders) return result;
 
-            result = _storage.CleanEmptyFolders(folder.FolderPath);
+            result = _storage.SafeCleanEmptyFolders(folder.FolderPath);
 
             _informer?.Inform("D");
             _informer?.LogDebug($"folder [{folder.Description}] : {folder.FolderPath} cleaned up from empty folders");
@@ -68,7 +68,7 @@ namespace gOldCleaner.DomainServices
 
             try
             {
-                var files = _storage.EnumerateFiles(folder.FolderPath, oneSearchPattern,
+                var files = _storage.SafeEnumerateFiles(folder.FolderPath, oneSearchPattern,
                     SearchOption.AllDirectories);
 
                 result = files.Aggregate(result,

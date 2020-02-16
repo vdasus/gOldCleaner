@@ -14,13 +14,13 @@ namespace gOldCleaner.InfrastructureServices
             _logger = logger;
         }
 
-        public override Result CleanEmptyFolders(string path)
+        public override Result SafeCleanEmptyFolders(string path)
         {
             try
             {
                 foreach (var directory in Fs.Directory.EnumerateDirectories(path))
                 {
-                    CleanEmptyFolders(directory);
+                    SafeCleanEmptyFolders(directory);
                     if (Fs.Directory.GetFiles(directory).Length == 0 &&
                         Fs.Directory.GetDirectories(directory).Length == 0)
                     {

@@ -121,7 +121,7 @@ namespace gOldCleaner.Tests.InfrastructureServices
             });
 
             var obj = new StorageService(fileSystem);
-            var sut = obj.EnumerateFiles(@"c:\", "*.txt", SearchOption.AllDirectories).ToList();
+            var sut = obj.SafeEnumerateFiles(@"c:\", "*.txt", SearchOption.AllDirectories).ToList();
 
             sut.Count.Should().Be(3);
         }
@@ -139,7 +139,7 @@ namespace gOldCleaner.Tests.InfrastructureServices
 
             var obj = new StorageService(fileSystem);
 
-            var sut = obj.CleanEmptyFolders(@"c:\");
+            var sut = obj.SafeCleanEmptyFolders(@"c:\");
 
             sut.IsSuccess.Should().BeTrue();
             fileSystem.AllDirectories.Count().Should().Be(2);

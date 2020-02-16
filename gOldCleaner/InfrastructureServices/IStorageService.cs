@@ -10,12 +10,12 @@ namespace gOldCleaner.InfrastructureServices
         bool IsFileExists(string path);
         bool IsDirectoryExists(string path);
 
-        IEnumerable<string> EnumerateFiles(string folderItemFolderName, string searchPattern,
+        IEnumerable<string> SafeEnumerateFiles(string folderItemFolderName, string searchPattern,
             SearchOption searchOption);
         DateTime GetLastWriteTimeUtc(string filename);
         long GetFileSize(string fileName);
         string GetFileName(string fileName);
         Result DeleteFile(string path);
-        Result CleanEmptyFolders(string path);
+        Result SafeCleanEmptyFolders(string path);
     }
 }

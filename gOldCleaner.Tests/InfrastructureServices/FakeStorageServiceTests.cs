@@ -29,7 +29,7 @@ namespace gOldCleaner.Tests.InfrastructureServices
 
             var obj = new FakeStorageService(fileSystem, logger.Object);
 
-            var sut = obj.CleanEmptyFolders(Path.GetPathRoot(FILE));
+            var sut = obj.SafeCleanEmptyFolders(Path.GetPathRoot(FILE));
 
             sut.IsSuccess.Should().BeTrue();
 

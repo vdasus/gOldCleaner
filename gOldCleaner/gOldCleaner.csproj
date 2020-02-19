@@ -3,11 +3,11 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <OutputType>Exe</OutputType>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <AssemblyVersion>1.0.0.31</AssemblyVersion>
-    <Version>1.0.0.31</Version>
+    <AssemblyVersion>1.0.0.43</AssemblyVersion>
+    <Version>1.0.0.43</Version>
   </PropertyGroup>
   <ItemGroup>
-    <None Update="gOldCleaner.exe.json">
+    <None Update="gOldCleaner.config.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="gOldCleaner.exe.nlog">
@@ -49,7 +49,7 @@
 
 <Target Name="PrepublishScript" BeforeTargets="PrepareForPublish">
   <ItemGroup>
-    <ConfigFiles Include="$(ProjectDir)gOldCleaner.exe.json" />
+    <ConfigFiles Include="$(ProjectDir)gOldCleaner.config.json" />
     <ConfigFiles Include="$(ProjectDir)gOldCleaner.exe.nlog" />
   </ItemGroup>
   <Copy SourceFiles="@(ConfigFiles)" DestinationFolder="$(PublishDir)" SkipUnchangedFiles="false" />

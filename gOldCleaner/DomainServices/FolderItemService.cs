@@ -55,9 +55,16 @@ namespace gOldCleaner.DomainServices
 
         public IEnumerable<FolderItem> MapFolders(List<FolderItemDto> folders)
         {
-            return folders.Select(folder =>
-                    new FolderItem(folder.Description, folder.FolderPath, folder.SearchPattern, ConvertStringToTimeSpan(folder.DeleteAfter), folder.IsDeleteEmptyFolders))
-                .ToList();
+            var result = new List<FolderItem>();
+
+            foreach (var folder in folders)
+            {
+                if(!_storage.IsDirectoryExists(folder.FolderPath)) throw new DirectoryNotFoundException($"{folder.FolderPath} is not exists.");
+
+                result.Add(new FolderItem(folder.Description, folder.FolderPath, folder.SearchPattern, ConvertStringToTimeSpan(folder.DeleteAfter), folder.IsDeleteEmptyFolders));
+            }
+
+            return result;
         }
 
         #region privates

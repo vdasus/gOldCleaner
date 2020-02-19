@@ -27,7 +27,7 @@ namespace gOldCleaner
 
             var builder = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("gOldCleaner.exe.json");
+                .AddJsonFile("gOldCleaner.config.json");
 
             var config = builder.Build();
 

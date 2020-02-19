@@ -7,6 +7,7 @@ using gOldCleaner.InfrastructureServices;
 using Moq;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.IO.Abstractions.TestingHelpers;
 using System.Linq;
 using Xunit;
@@ -89,10 +90,18 @@ namespace gOldCleaner.Tests.DomainServices
         [InlineData("7m", 7)]
         public void MapFoldersValid(string timespan, double rez)
         {
-            var fixture = new Fixture();
-            var data = fixture.Build<FolderItemDto>().With(x => x.DeleteAfter, timespan).CreateMany(5).ToList();
+            var fileSystem = new MockFileSystem(new Dictionary<string, MockFileData>
+            {
+                { @"c:\temp\myfile.txt", new MockFileData("Data") }
+            });
 
-            var obj = new FolderItemService(new Mock<IStorageService>().Object);
+            var fixture = new Fixture();
+            var data = fixture.Build<FolderItemDto>()
+                .With(x => x.DeleteAfter, timespan)
+                .With(x=>x.FolderPath, @"c:\temp\")
+                .CreateMany(5).ToList();
+
+            var obj = new FolderItemService(new StorageService(fileSystem));
             var sut = obj.MapFolders(data).ToList();
 
             sut.Count.Should().Be(5);
@@ -108,13 +117,57 @@ namespace gOldCleaner.Tests.DomainServices
         [InlineData("5u")]
         public void MapFoldersInvalid(string timespan)
         {
-            var fixture = new Fixture();
-            var data = fixture.Build<FolderItemDto>().With(x => x.DeleteAfter, timespan).CreateMany(5).ToList();
+            var fileSystem = new MockFileSystem(new Dictionary<string, MockFileData>
+            {
+                { @"c:\temp\myfile.txt", new MockFileData("Data") }
+            });
 
-            var obj = new FolderItemService(new Mock<IStorageService>().Object);
-            Action sut = () => obj.MapFolders(data).ToList();
+            var fixture = new Fixture();
+            var data = fixture.Build<FolderItemDto>()
+                .With(x => x.DeleteAfter, timespan)
+                .With(x => x.FolderPath, @"c:\temp\")
+                .CreateMany(5).ToList();
+
+            var obj = new FolderItemService(new StorageService(fileSystem));
+            Action sut = () => obj.MapFolders(data);
 
             sut.Should().ThrowExactly<ArgumentException>().WithMessage($"Bad DeleteAfter parameter {timespan}*");
         }
+
+        [Fact]
+        public void MapFoldersWhenDirNotFound()
+        {
+            var fixture = new Fixture();
+            var data = fixture.Build<FolderItemDto>()
+                .With(x => x.DeleteAfter, "30d")
+                .With(x=>x.FolderPath, "c:\\TEMP\\nonexistingfolderBEE34A23-572A-4C0E-BA9B-FF0A9671ACF7")
+                .CreateMany(5).ToList();
+
+            var obj = new FolderItemService(Mock.Of<IStorageService>());
+            Action sut = () => obj.MapFolders(data);
+
+            sut.Should().ThrowExactly<DirectoryNotFoundException>().WithMessage(@"c:\TEMP\nonexistingfolderBEE34A23-572A-4C0E-BA9B-FF0A9671ACF7 is not exists.");
+        }
+        
+        [Fact]
+        public void MapFoldersWhenBadFolderInConfig()
+        {
+            var fileSystem = new MockFileSystem(new Dictionary<string, MockFileData>
+            {
+                { @"c:\temp\myfile.txt", new MockFileData("Data") }
+            });
+
+            var fixture = new Fixture();
+            var data = fixture.Build<FolderItemDto>()
+                .With(x => x.DeleteAfter, "30d")
+                .With(x=>x.FolderPath, "c:\temp")
+                .CreateMany(5).ToList();
+
+            var obj = new FolderItemService(new StorageService(fileSystem));
+            Action sut = () => obj.MapFolders(data);
+
+            sut.Should().ThrowExactly<DirectoryNotFoundException>().WithMessage(@"c:	emp is not exists.");
+        }
+
     }
 }

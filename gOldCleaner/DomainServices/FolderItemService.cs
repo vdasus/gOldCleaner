@@ -13,9 +13,9 @@ namespace gOldCleaner.DomainServices
     public sealed class FolderItemService : IFolderItemService
     {
         private readonly IStorageService _storage;
-        private readonly IInformer _informer;
+        private readonly IInformerService _informer;
 
-        public FolderItemService(IStorageService storage, IInformer informer = null)
+        public FolderItemService(IStorageService storage, IInformerService informer = null)
         {
             _storage = storage;
             _informer = informer;
@@ -24,16 +24,18 @@ namespace gOldCleaner.DomainServices
 
         public Result Cleanup(FolderItem folder)
         {
+            if (folder is null) return Result.Failure($"{nameof(folder)} can't be null");
+
             _informer?.LogDebug($"Processing [{folder.Description}] : {folder.FolderPath}...");
 
-            var dateDeleteAfter = DateTime.UtcNow - folder.DeleteAfter;
+            var dateDeleteBefore = GetCorrectDeleteBefore(folder.DeleteAfter);
             var result = Result.Success();
 
             var searchPatterns = folder.SearchPattern.Split(',');
 
             result = searchPatterns.Aggregate(result,
                 (current, searchPattern) => 
-                    Result.Combine(current, CleanFolderBySearchPattern(folder, searchPattern, dateDeleteAfter)));
+                    Result.Combine(current, CleanFolderBySearchPattern(folder, searchPattern, dateDeleteBefore)));
 
             _informer?.LogDebug($"Done [{folder.Description}] : {folder.FolderPath}");
 
@@ -42,6 +44,8 @@ namespace gOldCleaner.DomainServices
 
         public Result DeleteEmptyFolders(FolderItem folder)
         {
+            if (folder is null) return Result.Failure($"{nameof(folder)} can't be null");
+
             var result = Result.Success();
             if (!folder.IsDeleteEmptyFolders) return result;
 
@@ -59,9 +63,11 @@ namespace gOldCleaner.DomainServices
 
             foreach (var folder in folders)
             {
-                if(!_storage.IsDirectoryExists(folder.FolderPath)) throw new DirectoryNotFoundException($"{folder.FolderPath} is not exists.");
+                if (!_storage.IsDirectoryExists(folder.FolderPath))
+                    throw new DirectoryNotFoundException($"{folder.FolderPath} is not exists.");
 
-                result.Add(new FolderItem(folder.Description, folder.FolderPath, folder.SearchPattern, ConvertStringToTimeSpan(folder.DeleteAfter), folder.IsDeleteEmptyFolders));
+                result.Add(new FolderItem(folder.Description, folder.FolderPath, folder.SearchPattern,
+                    ConvertStringToTimeSpan(folder.DeleteAfter), folder.IsDeleteEmptyFolders));
             }
 
             return result;
@@ -69,8 +75,10 @@ namespace gOldCleaner.DomainServices
 
         #region privates
 
-        private Result CleanFolderBySearchPattern(FolderItem folder, string oneSearchPattern, DateTime dateDeleteAfter)
+        private Result CleanFolderBySearchPattern(FolderItem folder, string oneSearchPattern, DateTime dateDeleteBefore)
         {
+            if (folder is null) return Result.Failure($"{nameof(folder)} can't be null");
+
             var result = Result.Success();
 
             try
@@ -79,7 +87,7 @@ namespace gOldCleaner.DomainServices
                     SearchOption.AllDirectories);
 
                 result = files.Aggregate(result,
-                    (current, file) => Result.Combine(current, CleanOneFile(dateDeleteAfter, file)));
+                    (current, file) => Result.Combine(current, CleanOneFile(dateDeleteBefore, file)));
             }
             catch (Exception ex)
             {
@@ -91,12 +99,12 @@ namespace gOldCleaner.DomainServices
             return result;
         }
 
-        private Result CleanOneFile(DateTime dateDeleteAfter, string file)
+        private Result CleanOneFile(DateTime dateDeleteBefore, string file)
         {
             var result = Result.Success();
 
             var lastwritedate = _storage.GetLastWriteTimeUtc(file);
-            if (lastwritedate <= dateDeleteAfter)
+            if (lastwritedate <= dateDeleteBefore)
             {
                 result = _storage.DeleteFile(file);
                 _informer?.Inform(result.IsSuccess ? "-" : "E");
@@ -127,6 +135,19 @@ namespace gOldCleaner.DomainServices
                 case "H": return TimeSpan.FromHours(num);
                 case "M": return TimeSpan.FromMinutes(num);
                 default: throw new ArgumentException(errorString);
+            }
+        }
+
+        private DateTime GetCorrectDeleteBefore(TimeSpan folderDeleteAfter)
+        {
+            try
+            {
+                return DateTime.UtcNow - folderDeleteAfter;
+            }
+            catch
+            {
+                _informer?.LogError($"Bad {nameof(folderDeleteAfter)}={folderDeleteAfter}, set to {DateTime.MinValue}");
+                return DateTime.MinValue;
             }
         }
 

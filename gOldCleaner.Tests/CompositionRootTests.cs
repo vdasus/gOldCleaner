@@ -17,12 +17,12 @@ namespace gOldCleaner.Tests
             CompositionRoot.BuildStorage(true);
 
             var sutFs = CompositionRoot.Container.Resolve<IFileSystem>();
-            var sutI = CompositionRoot.Container.Resolve<IInformer>();
+            var sutI = CompositionRoot.Container.Resolve<IInformerService>();
             var sutL = CompositionRoot.Container.Resolve<ILogger>();
             var sutFis = CompositionRoot.Container.Resolve<IFolderItemService>();
 
             sutFs.Should().BeOfType<FileSystem>();
-            sutI.Should().BeOfType<Informer>();
+            sutI.Should().BeOfType<InformerService>();
             sutL.Should().BeOfType<NLog.Logger>();
             sutFis.Should().BeOfType<FolderItemService>();
         }

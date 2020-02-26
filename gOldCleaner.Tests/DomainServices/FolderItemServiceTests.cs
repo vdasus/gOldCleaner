@@ -1,15 +1,17 @@
 ﻿using AutoFixture;
 using FluentAssertions;
+using FsCheck.Xunit;
 using gOldCleaner.Domain;
-using gOldCleaner.DomainServices;
 using gOldCleaner.Dto;
 using gOldCleaner.InfrastructureServices;
+using gOldCleaner.Tests.InfrastructureServices;
 using Moq;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Abstractions.TestingHelpers;
 using System.Linq;
+using gOldCleaner.DomainServices;
 using Xunit;
 
 namespace gOldCleaner.Tests.DomainServices
@@ -40,6 +42,15 @@ namespace gOldCleaner.Tests.DomainServices
             fileSystem.AllDirectories.Count().Should().Be(4);
         }
 
+        [Property(Arbitrary = new[] { typeof(NonNullOrEmptyStringArbitraries) })]
+        public void CleanupWhenValid(FolderItem item)
+        {
+            var fiSvc = new FolderItemService(new Mock<IStorageService>().Object);
+
+            Action sut = () => fiSvc.Cleanup(item);
+            sut.Should().NotThrow();
+        }
+
         [Fact]
         public void DeleteEmptyFolders()
         {
@@ -62,6 +73,15 @@ namespace gOldCleaner.Tests.DomainServices
             fileSystem.AllDirectories.Count().Should().Be(3);
         }
 
+        [Property(Arbitrary = new[] { typeof(NonNullOrEmptyStringArbitraries) })]
+        public void DeleteEmptyFoldersWhenValid(FolderItem item)
+        {
+            var fiSvc = new FolderItemService(new Mock<IStorageService>().Object);
+
+            Action sut = () => fiSvc.DeleteEmptyFolders(item);
+            sut.Should().NotThrow();
+        }
+
         [Fact]
         public void CleanupInform()
         {
@@ -76,7 +96,7 @@ namespace gOldCleaner.Tests.DomainServices
 
             var data = new FolderItem("test", @"c:\temp\", "*.txt", TimeSpan.FromDays(1), true);
 
-            var informer = new Mock<IInformer>();
+            var informer = new Mock<IInformerService>();
             var fiSvc = new FolderItemService(new StorageService(fileSystem), informer.Object);
 
             var sut = fiSvc.Cleanup(data);

@@ -3,11 +3,11 @@ using NLog;
 
 namespace gOldCleaner.InfrastructureServices
 {
-    public class Informer : IInformer
+    public class InformerService : IInformerService
     {
         private readonly ILogger _logger;
 
-        public Informer(ILogger logger)
+        public InformerService(ILogger logger)
         {
             _logger = logger;
         }

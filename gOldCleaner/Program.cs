@@ -80,7 +80,7 @@ namespace gOldCleaner
                 return 99;
             }
         }
-
+        
         private static void ShowHelp(OptionSet p)
         {
             Console.WriteLine($"Usage: {APP_NAME} [OPTIONS]+");

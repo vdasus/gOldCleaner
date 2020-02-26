@@ -10,6 +10,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Abstractions.TestingHelpers;
 using System.Linq;
+using FsCheck.Xunit;
+using gOldCleaner.Tests.InfrastructureServices;
 using Xunit;
 
 namespace gOldCleaner.Tests.DomainServices
@@ -40,6 +42,15 @@ namespace gOldCleaner.Tests.DomainServices
             fileSystem.AllDirectories.Count().Should().Be(4);
         }
 
+        [Property(Arbitrary = new[] { typeof(NonNullOrEmptyStringArbitraries) })]
+        public void CleanupWhenValid(FolderItem item)
+        {
+            var fiSvc = new FolderItemService(new Mock<IStorageService>().Object);
+
+            Action sut = () => fiSvc.Cleanup(item);
+            sut.Should().NotThrow();
+        }
+
         [Fact]
         public void DeleteEmptyFolders()
         {
@@ -60,6 +71,15 @@ namespace gOldCleaner.Tests.DomainServices
             sut.IsSuccess.Should().BeTrue();
             fileSystem.AllFiles.Count().Should().Be(2);
             fileSystem.AllDirectories.Count().Should().Be(3);
+        }
+
+        [Property(Arbitrary = new[] { typeof(NonNullOrEmptyStringArbitraries) })]
+        public void DeleteEmptyFoldersWhenValid(FolderItem item)
+        {
+            var fiSvc = new FolderItemService(new Mock<IStorageService>().Object);
+
+            Action sut = () => fiSvc.DeleteEmptyFolders(item);
+            sut.Should().NotThrow();
         }
 
         [Fact]

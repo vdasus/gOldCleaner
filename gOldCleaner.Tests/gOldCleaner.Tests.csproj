@@ -6,6 +6,7 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\gOldCleaner\gOldCleaner.csproj" />
+    <ProjectReference Include="..\NetArchTest.Rules\src\NetArchTest.Rules\NetArchTest.Rules.csproj" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="AutoFixture" Version="4.11.0" />

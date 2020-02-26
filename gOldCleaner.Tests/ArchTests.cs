@@ -1,9 +1,9 @@
 ﻿using FluentAssertions;
 using gOldCleaner.Domain;
-using NetArchTest.Rules;
-using System.Reflection;
 using gOldCleaner.DomainServices;
 using gOldCleaner.InfrastructureServices;
+using System.Reflection;
+using NetArchTest.Rules;
 using Xunit;
 
 namespace gOldCleaner.Tests
@@ -86,7 +86,7 @@ namespace gOldCleaner.Tests
             result.FailingTypeNames.Should().BeNullOrEmpty("Domain can't depend on DomainServices");
             result.IsSuccessful.Should().BeTrue();
         }
-
+        
         //TODO something not as expected
         [Fact]
         public void Domain_Classes_Should_Not_Depend_On_InfrastructureServices_Layer()

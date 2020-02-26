@@ -3,9 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29709.97
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "gOldCleaner", "gOldCleaner\gOldCleaner.csproj", "{46F50EF6-AF37-4063-870C-CEA05CD6AB54}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "gOldCleaner", "gOldCleaner\gOldCleaner.csproj", "{46F50EF6-AF37-4063-870C-CEA05CD6AB54}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "gOldCleaner.Tests", "gOldCleaner.Tests\gOldCleaner.Tests.csproj", "{7D420E41-8CB5-494B-8911-A7A82D97F009}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "gOldCleaner.Tests", "gOldCleaner.Tests\gOldCleaner.Tests.csproj", "{7D420E41-8CB5-494B-8911-A7A82D97F009}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NetArchTest.Rules", "NetArchTest.Rules\src\NetArchTest.Rules\NetArchTest.Rules.csproj", "{869A3D3F-1975-4681-B778-05B002A57C0B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{7D420E41-8CB5-494B-8911-A7A82D97F009}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7D420E41-8CB5-494B-8911-A7A82D97F009}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7D420E41-8CB5-494B-8911-A7A82D97F009}.Release|Any CPU.Build.0 = Release|Any CPU
+		{869A3D3F-1975-4681-B778-05B002A57C0B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{869A3D3F-1975-4681-B778-05B002A57C0B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{869A3D3F-1975-4681-B778-05B002A57C0B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{869A3D3F-1975-4681-B778-05B002A57C0B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

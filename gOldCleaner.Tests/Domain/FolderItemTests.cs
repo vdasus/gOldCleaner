@@ -2,7 +2,6 @@
 using FluentAssertions;
 using FsCheck.Xunit;
 using gOldCleaner.Domain;
-using gOldCleaner.Tests.InfrastructureServices;
 using System;
 using Xunit;
 

@@ -4,7 +4,6 @@ using FsCheck.Xunit;
 using gOldCleaner.Domain;
 using gOldCleaner.Dto;
 using gOldCleaner.InfrastructureServices;
-using gOldCleaner.Tests.InfrastructureServices;
 using Moq;
 using System;
 using System.Collections.Generic;

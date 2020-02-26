@@ -32,7 +32,7 @@ namespace gOldCleaner.Tests
 
             var result = types
                 .That()
-                .ResideInNamespaceMatching("gOldCleaner")
+                .ResideInNamespace("gOldCleaner")
                 .ShouldNot()
                 .HaveDependencyOn("gOldCleaner.Tests")
                 .GetResult();

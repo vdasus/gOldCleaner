@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using FsCheck;
 
-namespace gOldCleaner.Tests.InfrastructureServices
+namespace gOldCleaner.Tests
 {
     public static class Arbitraries
     {

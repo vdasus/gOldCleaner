@@ -5,7 +5,7 @@ using System.IO;
 
 namespace gOldCleaner.InfrastructureServices
 {
-    public interface IStorageService
+    public interface IStorageService : IInfrastructureService
     {
         bool IsFileExists(string path);
         bool IsDirectoryExists(string path);

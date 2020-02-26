@@ -58,11 +58,9 @@ namespace gOldCleaner.Tests
         {
             var types = Types.InAssembly(ApplicationAssembly);
             var result = types.That()
-                .ImplementInterface(typeof(IStorageService))
+                .ImplementInterface(typeof(IDomainService))
                 .Or()
-                .ImplementInterface(typeof(IInformerService))
-                .Or()
-                .ImplementInterface(typeof(IFolderItemService))
+                .ImplementInterface(typeof(IInfrastructureService))
                 .Should()
                 .HaveNameEndingWith("Service").GetResult();
 

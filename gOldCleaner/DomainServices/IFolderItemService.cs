@@ -5,7 +5,7 @@ using gOldCleaner.Dto;
 
 namespace gOldCleaner.DomainServices
 {
-    public interface IFolderItemService
+    public interface IFolderItemService : IDomainService
     {
         Result Cleanup(FolderItem folder);
         Result DeleteEmptyFolders(FolderItem folder);

@@ -11,7 +11,7 @@ namespace gOldCleaner.Tests.InfrastructureServices
     public class StorageServiceExtensionsTests
     {
         [Fact]
-        public void ExceptionsNotThrown()
+        public void StorageService_Exceptions_Not_Thrown()
         {
             var files = new GetTestEnumerable();
 

@@ -6,7 +6,7 @@ using NLog;
 namespace gOldCleaner.Tests.InfrastructureServices
 {
     [Trait("Common", "Unit Test")]
-    public class InformerTests
+    public class InformerServiceTests
     {
         [Fact]
         public void Debug()

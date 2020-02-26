@@ -13,12 +13,6 @@ namespace gOldCleaner.Tests.InfrastructureServices
     [Trait("Common", "Unit Test")]
     public class StorageServiceTests
     {
-        /*static StorageServiceTests()
-        {
-            // Register all static properties the return a generator in this class
-            Arb.Register<StorageServiceTests>();
-        }*/
-
         [Fact]
         public void IsFileExists()
         {
@@ -71,7 +65,7 @@ namespace gOldCleaner.Tests.InfrastructureServices
         [Theory]
         [InlineData(null, "[] not found")]
         [InlineData(@"525DE403-8D8D-4E96-B8E1-7270F434D129.unk", "[525DE403-8D8D-4E96-B8E1-7270F434D129.unk] not found")]
-        public void GetLastWriteTimeUtcWhenNotFoundOrNull(string path, string err)
+        public void GetLastWriteTimeUtc_When_Not_Found_Or_Null(string path, string err)
         {
             var obj = new StorageService(new MockFileSystem());
             Action sut = () => obj.GetLastWriteTimeUtc(path);
@@ -96,7 +90,7 @@ namespace gOldCleaner.Tests.InfrastructureServices
         [Theory]
         [InlineData(null, "[] not found")]
         [InlineData(@"525DE403-8D8D-4E96-B8E1-7270F434D129.unk", "[525DE403-8D8D-4E96-B8E1-7270F434D129.unk] not found")]
-        public void GetFileSizeWhenNotFoundOrNull(string path, string err)
+        public void GetFileSize_When_Not_Found_Or_Null(string path, string err)
         {
             var obj = new StorageService(new MockFileSystem());
             Action sut = () => obj.GetFileSize(path);
@@ -172,7 +166,7 @@ namespace gOldCleaner.Tests.InfrastructureServices
 
         [Trait("Common", "PBT")]
         [Property(Arbitrary = new[] { typeof(Arbitraries) })]
-        public void IsFileExistsPropertyForInvalidFileNames(string fileName)
+        public void IsFileExists_Property_For_Invalid_FileNames(string fileName)
         {
             var obj = new StorageService(new MockFileSystem());
             var sut = obj.IsFileExists(fileName);

@@ -11,7 +11,7 @@ namespace gOldCleaner.Tests.Domain
     public class FolderItemTests
     {
         [Fact]
-        public void ValidFolderItem()
+        public void Should_Create_Valid_FolderItem()
         {
             var fixture = new Fixture();
             Action sut = () => { fixture.Create<FolderItem>(); };
@@ -27,7 +27,7 @@ namespace gOldCleaner.Tests.Domain
         [InlineData(null, "", "")]
         [InlineData("", null, "")]
         [InlineData("", "", null)]
-        public void InvalidFolderItem(string description, string folderPath, string searchPattern)
+        public void Throw_On_Creating_FolderItem_With_Invalid_Parameters(string description, string folderPath, string searchPattern)
         {
             Action sut = () => new FolderItem(description, folderPath, searchPattern, TimeSpan.MinValue, true);
 
@@ -37,7 +37,7 @@ namespace gOldCleaner.Tests.Domain
 
         [Trait("Common", "PBT")]
         [Property(Arbitrary = new[] { typeof(NonNullOrEmptyStringArbitraries) })]
-        public void CheckProperty(string description, string folderPath, string searchPattern, TimeSpan timeSpan, bool isDelete)
+        public void Create_Random_FolderItems(string description, string folderPath, string searchPattern, TimeSpan timeSpan, bool isDelete)
         {
             var sut = new FolderItem(description, folderPath, searchPattern, timeSpan, isDelete);
             sut.Description.Should().Be(description);

@@ -12,7 +12,7 @@ namespace gOldCleaner.Tests
     public class CompositionRootTests
     {
         [Fact]
-        public void Valid()
+        public void Valid_CompositionRoot_Initialization()
         {
             CompositionRoot.BuildStorage(true);
 

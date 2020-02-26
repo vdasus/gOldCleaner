@@ -42,7 +42,7 @@ namespace gOldCleaner.Tests.DomainServices
         }
 
         [Property(Arbitrary = new[] { typeof(NonNullOrEmptyStringArbitraries) })]
-        public void CleanupWhenValid(FolderItem item)
+        public void Cleanup_When_Valid(FolderItem item)
         {
             var fiSvc = new FolderItemService(new Mock<IStorageService>().Object);
 
@@ -73,7 +73,7 @@ namespace gOldCleaner.Tests.DomainServices
         }
 
         [Property(Arbitrary = new[] { typeof(NonNullOrEmptyStringArbitraries) })]
-        public void DeleteEmptyFoldersWhenValid(FolderItem item)
+        public void Rendom_DeleteEmptyFolders_When_Valid(FolderItem item)
         {
             var fiSvc = new FolderItemService(new Mock<IStorageService>().Object);
 
@@ -82,7 +82,7 @@ namespace gOldCleaner.Tests.DomainServices
         }
 
         [Fact]
-        public void CleanupInform()
+        public void Cleanup_Informer()
         {
             var fileSystem = new MockFileSystem(new Dictionary<string, MockFileData>
             {
@@ -107,7 +107,7 @@ namespace gOldCleaner.Tests.DomainServices
         [InlineData("5d", 5 * 60 * 24)]
         [InlineData("6h", 6 * 60)]
         [InlineData("7m", 7)]
-        public void MapFoldersValid(string timespan, double rez)
+        public void MapFolders_Valid(string timespan, double rez)
         {
             var fileSystem = new MockFileSystem(new Dictionary<string, MockFileData>
             {
@@ -134,7 +134,7 @@ namespace gOldCleaner.Tests.DomainServices
         [InlineData("5char_not_D_H_M")]
         [InlineData("Not_a_digit_first")]
         [InlineData("5u")]
-        public void MapFoldersInvalid(string timespan)
+        public void MapFolders_Invalid(string timespan)
         {
             var fileSystem = new MockFileSystem(new Dictionary<string, MockFileData>
             {
@@ -154,7 +154,7 @@ namespace gOldCleaner.Tests.DomainServices
         }
 
         [Fact]
-        public void MapFoldersWhenDirNotFound()
+        public void MapFolders_When_Dir_Not_Found()
         {
             var fixture = new Fixture();
             var data = fixture.Build<FolderItemDto>()
@@ -169,7 +169,7 @@ namespace gOldCleaner.Tests.DomainServices
         }
         
         [Fact]
-        public void MapFoldersWhenBadFolderInConfig()
+        public void MapFolders_When_Bad_Folder_In_Config()
         {
             var fileSystem = new MockFileSystem(new Dictionary<string, MockFileData>
             {

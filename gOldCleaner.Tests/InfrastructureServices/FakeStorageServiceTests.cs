@@ -14,7 +14,7 @@ namespace gOldCleaner.Tests.InfrastructureServices
     public class FakeStorageServiceTests
     {
         [Fact]
-        public void CleanEmptyFolders_DeletNotInvoked()
+        public void CleanEmptyFolders_Delete_Not_Invoked()
         {
             const string FILE = @"c:\myfile.txt";
 
@@ -41,7 +41,7 @@ namespace gOldCleaner.Tests.InfrastructureServices
         }
         
         [Fact]
-        public void DeleteFile_DeleteNotInvoked()
+        public void DeleteFile_Delete_Not_Invoked()
         {
             const string FILE = @"c:\myfile.txt";
 

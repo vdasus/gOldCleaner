@@ -1,8 +1,10 @@
-﻿using System;
+﻿using CSharpFunctionalExtensions;
+using System;
+using System.Collections.Generic;
 
 namespace gOldCleaner.Domain
 {
-    public sealed class FolderItem
+    public sealed class FolderItem: ValueObject
     {
         public string Description { get; }
         public string FolderPath { get; }
@@ -25,5 +27,18 @@ namespace gOldCleaner.Domain
             DeleteAfter = deleteAfter;
             IsDeleteEmptyFolders = isDeleteEmptyFolders;
         }
+
+        #region Overrides of ValueObject
+
+        protected override IEnumerable<object> GetEqualityComponents()
+        {
+            yield return Description;
+            yield return FolderPath;
+            yield return DeleteAfter;
+            yield return SearchPattern;
+            yield return IsDeleteEmptyFolders;
+        }
+
+        #endregion
     }
 }

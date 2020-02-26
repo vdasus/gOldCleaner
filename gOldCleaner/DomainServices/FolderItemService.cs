@@ -13,9 +13,9 @@ namespace gOldCleaner.DomainServices
     public sealed class FolderItemService : IFolderItemService
     {
         private readonly IStorageService _storage;
-        private readonly IInformer _informer;
+        private readonly IInformerService _informer;
 
-        public FolderItemService(IStorageService storage, IInformer informer = null)
+        public FolderItemService(IStorageService storage, IInformerService informer = null)
         {
             _storage = storage;
             _informer = informer;

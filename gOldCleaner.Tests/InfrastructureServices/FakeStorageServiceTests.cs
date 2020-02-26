@@ -41,7 +41,7 @@ namespace gOldCleaner.Tests.InfrastructureServices
         }
         
         [Fact]
-        public void DeleteFile_DeletNotInvoked()
+        public void DeleteFile_DeleteNotInvoked()
         {
             const string FILE = @"c:\myfile.txt";
 

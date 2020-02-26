@@ -1,6 +1,6 @@
 ﻿namespace gOldCleaner.InfrastructureServices
 {
-    public interface IInformer
+    public interface IInformerService
     {
         void Inform(string message);
         void LogDebug(string messageToLog);

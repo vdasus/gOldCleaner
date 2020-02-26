@@ -12,7 +12,7 @@ namespace gOldCleaner.Tests.InfrastructureServices
         public void Debug()
         {
             var logger = new Mock<ILogger>();
-            var obj = new Informer(logger.Object);
+            var obj = new InformerService(logger.Object);
             obj.LogDebug("test debug");
             logger.Verify(x=>x.Debug("test debug"), Times.Once);
         }
@@ -21,7 +21,7 @@ namespace gOldCleaner.Tests.InfrastructureServices
         public void Trace()
         {
             var logger = new Mock<ILogger>();
-            var obj = new Informer(logger.Object);
+            var obj = new InformerService(logger.Object);
             obj.LogTrace("test trace");
             logger.Verify(x=>x.Trace("test trace"), Times.Once);
         }
@@ -30,7 +30,7 @@ namespace gOldCleaner.Tests.InfrastructureServices
         public void Error()
         {
             var logger = new Mock<ILogger>();
-            var obj = new Informer(logger.Object);
+            var obj = new InformerService(logger.Object);
             obj.LogError("test error");
             logger.Verify(x=>x.Error("test error"), Times.Once);
         }

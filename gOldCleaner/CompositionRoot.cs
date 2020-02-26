@@ -29,7 +29,7 @@ namespace gOldCleaner
             Container.Register<IFileSystem, FileSystem>(Reuse.Singleton);
             
             Container.Register<IFolderItemService, FolderItemService>(Reuse.Singleton);
-            Container.Register<IInformer, Informer>(Reuse.Singleton);
+            Container.Register<IInformerService, InformerService>(Reuse.Singleton);
             
             Container.Use<ILogger>(Log);
 

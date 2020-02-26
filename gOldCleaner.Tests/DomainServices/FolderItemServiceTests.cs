@@ -1,17 +1,17 @@
 ﻿using AutoFixture;
 using FluentAssertions;
+using FsCheck.Xunit;
 using gOldCleaner.Domain;
-using gOldCleaner.DomainServices;
 using gOldCleaner.Dto;
 using gOldCleaner.InfrastructureServices;
+using gOldCleaner.Tests.InfrastructureServices;
 using Moq;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Abstractions.TestingHelpers;
 using System.Linq;
-using FsCheck.Xunit;
-using gOldCleaner.Tests.InfrastructureServices;
+using gOldCleaner.DomainServices;
 using Xunit;
 
 namespace gOldCleaner.Tests.DomainServices
@@ -96,7 +96,7 @@ namespace gOldCleaner.Tests.DomainServices
 
             var data = new FolderItem("test", @"c:\temp\", "*.txt", TimeSpan.FromDays(1), true);
 
-            var informer = new Mock<IInformer>();
+            var informer = new Mock<IInformerService>();
             var fiSvc = new FolderItemService(new StorageService(fileSystem), informer.Object);
 
             var sut = fiSvc.Cleanup(data);

@@ -1,9 +1,9 @@
-﻿using System;
-using AutoFixture;
+﻿using AutoFixture;
 using FluentAssertions;
-using FsCheck;
 using FsCheck.Xunit;
 using gOldCleaner.Domain;
+using gOldCleaner.Tests.InfrastructureServices;
+using System;
 using Xunit;
 
 namespace gOldCleaner.Tests.Domain
@@ -20,9 +20,11 @@ namespace gOldCleaner.Tests.Domain
         }
         
         [Theory]
+        [InlineData("", "", "")]
         [InlineData("1", "", "")]
         [InlineData("", "1", "")]
         [InlineData("", "", "1")]
+        [InlineData(null, null, null)]
         [InlineData(null, "", "")]
         [InlineData("", null, "")]
         [InlineData("", "", null)]
@@ -34,27 +36,12 @@ namespace gOldCleaner.Tests.Domain
 
         }
 
-        //TODO just playing with PBT, remove later
         [Trait("Common", "PBT")]
-        [Property]
-        public Property CheckProperty(NonEmptyString description, NonEmptyString folderPath, NonEmptyString searchPattern)
+        [Property(Arbitrary = new[] { typeof(NonNullOrEmptyStringArbitraries) })]
+        public void CheckProperty(string description, string folderPath, string searchPattern, TimeSpan timeSpan, bool isDelete)
         {
-            Func<bool> sut = () =>
-            {
-                try
-                {
-                    new FolderItem(description.Get, folderPath.Get, searchPattern.Get, TimeSpan.MinValue, true);
-                    return true;
-                }
-                catch
-                {
-                    return false;
-                }
-            };
-            
-            return sut.When(!string.IsNullOrWhiteSpace(description.Get) && !string.IsNullOrWhiteSpace(folderPath.Get) && !string.IsNullOrWhiteSpace(searchPattern.Get))
-                .Classify(description.Get.Contains("a"), "Contains [a]")
-                .Classify(description.Get.Contains(" "), "Contains [ ]");
+            var sut = new FolderItem(description, folderPath, searchPattern, timeSpan, isDelete);
+            sut.Description.Should().Be(description);
         }
     }
 }

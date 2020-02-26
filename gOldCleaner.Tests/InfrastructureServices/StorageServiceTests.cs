@@ -1,5 +1,4 @@
 ﻿using FluentAssertions;
-using FsCheck;
 using FsCheck.Xunit;
 using gOldCleaner.InfrastructureServices;
 using System;
@@ -172,26 +171,12 @@ namespace gOldCleaner.Tests.InfrastructureServices
         }
 
         [Trait("Common", "PBT")]
-        [Property(Arbitrary = new[] { typeof(FsArbitraries) })]
+        [Property(Arbitrary = new[] { typeof(Arbitraries) })]
         public void IsFileExistsPropertyForInvalidFileNames(string fileName)
         {
             var obj = new StorageService(new MockFileSystem());
             var sut = obj.IsFileExists(fileName);
             sut.Should().BeFalse();
-        }
-    }
-
-    public static class FsArbitraries
-    {
-        private static readonly char[] InvalidChars = Path.GetInvalidFileNameChars();
-
-        public static Arbitrary<string> InvalidFileNameGenerator()
-        {
-            var input = from invalidChar in Gen.Elements(InvalidChars)
-                from fname in Arb.Generate<NonEmptyString>()
-                        select $"{fname}{invalidChar}";
-
-            return input.ToArbitrary();
         }
     }
 }

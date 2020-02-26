@@ -1,7 +1,9 @@
-﻿using System;
-using AutoFixture;
+﻿using AutoFixture;
 using FluentAssertions;
+using FsCheck.Xunit;
 using gOldCleaner.Domain;
+using gOldCleaner.Tests.InfrastructureServices;
+using System;
 using Xunit;
 
 namespace gOldCleaner.Tests.Domain
@@ -18,9 +20,11 @@ namespace gOldCleaner.Tests.Domain
         }
         
         [Theory]
+        [InlineData("", "", "")]
         [InlineData("1", "", "")]
         [InlineData("", "1", "")]
         [InlineData("", "", "1")]
+        [InlineData(null, null, null)]
         [InlineData(null, "", "")]
         [InlineData("", null, "")]
         [InlineData("", "", null)]
@@ -30,6 +34,14 @@ namespace gOldCleaner.Tests.Domain
 
             sut.Should().ThrowExactly<ArgumentNullException>().WithMessage("Value cannot be null*");
 
+        }
+
+        [Trait("Common", "PBT")]
+        [Property(Arbitrary = new[] { typeof(NonNullOrEmptyStringArbitraries) })]
+        public void CheckProperty(string description, string folderPath, string searchPattern, TimeSpan timeSpan, bool isDelete)
+        {
+            var sut = new FolderItem(description, folderPath, searchPattern, timeSpan, isDelete);
+            sut.Description.Should().Be(description);
         }
     }
 }

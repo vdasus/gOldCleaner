@@ -53,9 +53,8 @@ namespace gOldCleaner.Tests
             result.FailingTypeNames.Should().BeNullOrEmpty("Interfaces must start with I");
             result.IsSuccessful.Should().BeTrue();
         }
-        
-        [Fact]
-        public void AImplementations_Of_IServices_Must_Have_Service_End()
+
+        [Fact] public void All_Implementations_Of_IServices_Must_Have_Service_End()
         {
             var types = Types.InAssembly(ApplicationAssembly);
             var result = types.That()
@@ -79,9 +78,9 @@ namespace gOldCleaner.Tests
             
             var result = types
                 .That()
-                .ResideInNamespaceMatching("^gOldCleaner.Domain$")
-                .ShouldNot()
-                .HaveDependencyOn("gOldCleaner.DomainServices")
+                .ResideInNamespaceMatching(@"^gOldCleaner\.Domain$")
+                .Should()
+                .NotHaveDependencyOn("gOldCleaner.DomainServices")
                 .GetResult();
 
             result.FailingTypeNames.Should().BeNullOrEmpty("Domain can't depend on DomainServices");
@@ -98,7 +97,7 @@ namespace gOldCleaner.Tests
 
             var result = types
                 .That()
-                .ResideInNamespaceMatching("^gOldCleaner.Domain$")
+                .ResideInNamespaceMatching(@"^gOldCleaner\.Domain$")
                 .ShouldNot()
                 .HaveDependencyOn("gOldCleaner.InfrastructureServices")
                 .GetResult();

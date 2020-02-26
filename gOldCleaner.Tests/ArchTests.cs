@@ -68,7 +68,6 @@ namespace gOldCleaner.Tests
             result.IsSuccessful.Should().BeTrue();
         }
 
-        //TODO something not as expected
         [Fact]
         public void Domain_Classes_Should_Not_Depend_On_DomainServices_Layer()
         {
@@ -85,7 +84,6 @@ namespace gOldCleaner.Tests
             result.IsSuccessful.Should().BeTrue();
         }
         
-        //TODO something not as expected
         [Fact]
         public void Domain_Classes_Should_Not_Depend_On_InfrastructureServices_Layer()
         {
@@ -96,8 +94,8 @@ namespace gOldCleaner.Tests
             var result = types
                 .That()
                 .ResideInNamespaceMatching(@"^gOldCleaner\.Domain$")
-                .ShouldNot()
-                .HaveDependencyOn("gOldCleaner.InfrastructureServices")
+                .Should()
+                .NotHaveDependencyOn("gOldCleaner.InfrastructureServices")
                 .GetResult();
 
             result.FailingTypeNames.Should().BeNullOrEmpty("Domain can't depend on InfrastructureServices");

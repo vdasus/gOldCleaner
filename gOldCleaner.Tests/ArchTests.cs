@@ -93,8 +93,6 @@ namespace gOldCleaner.Tests
         {
             var types = Types.InAssembly(ApplicationAssembly);
 
-            var tt = Types.InAssembly(ApplicationAssembly).That().ResideInNamespace("gOldCleaner.Domain");
-
             var result = types
                 .That()
                 .ResideInNamespaceMatching(@"^gOldCleaner\.Domain$")

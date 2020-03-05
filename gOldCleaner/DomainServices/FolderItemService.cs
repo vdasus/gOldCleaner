@@ -129,13 +129,13 @@ namespace gOldCleaner.DomainServices
             var num = int.Parse(data.Groups[1]?.Value);
             var term = data.Groups[2].Value.ToUpperInvariant();
 
-            switch (term)
+            return term switch
             {
-                case "D": return TimeSpan.FromDays(num);
-                case "H": return TimeSpan.FromHours(num);
-                case "M": return TimeSpan.FromMinutes(num);
-                default: throw new ArgumentException(errorString);
-            }
+                "D" => TimeSpan.FromDays(num),
+                "H" => TimeSpan.FromHours(num),
+                "M" => TimeSpan.FromMinutes(num),
+                _ => throw new ArgumentException(errorString)
+            };
         }
 
         private DateTime GetCorrectDeleteBefore(TimeSpan folderDeleteAfter)

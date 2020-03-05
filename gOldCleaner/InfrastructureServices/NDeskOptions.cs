@@ -5,6 +5,7 @@
 //  Jonathan Pryor <jpryor@novell.com>
 //
 // Copyright (C) 2008 Novell (http://www.novell.com)
+// Copyright (C) 2020 modified by vdasus (http://vdasus.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -386,18 +387,12 @@ namespace gOldCleaner.InfrastructureServices
                     nameof(Prototype));
             if (MaxValueCount <= 1) return type == '=' ? OptionValueType.Required : OptionValueType.Optional;
 
-            switch (seps.Count)
+            ValueSeparators = seps.Count switch
             {
-                case 0:
-                    ValueSeparators = new[] { ":", "=" };
-                    break;
-                case 1 when seps[0].Length == 0:
-                    ValueSeparators = null;
-                    break;
-                default:
-                    ValueSeparators = seps.ToArray();
-                    break;
-            }
+                0 => new[] {":", "="},
+                1 when seps[0].Length == 0 => null,
+                _ => seps.ToArray()
+            };
 
             return type == '=' ? OptionValueType.Required : OptionValueType.Optional;
         }
@@ -421,7 +416,7 @@ namespace gOldCleaner.InfrastructureServices
                             throw new ArgumentException(
                                 $"Ill-formed name/value separator found in \"{name}\".",
                                 nameof(Prototype));
-                        seps.Add(name.Substring(start, i - start));
+                        seps.Add(name[start..i]);
                         start = -1;
                         break;
                     default:
@@ -842,11 +837,11 @@ namespace gOldCleaner.InfrastructureServices
         private bool ParseBool(string option, string n, OptionContext c)
         {
             string rn;
-            if (n.Length < 1 || (n[n.Length - 1] != '+' && n[n.Length - 1] != '-') ||
-                !Contains((rn = n.Substring(0, n.Length - 1)))) return false;
+            if (n.Length < 1 || (n[^1] != '+' && n[^1] != '-') ||
+                !Contains((rn = n[..^1]))) return false;
 
             var p = this[rn];
-            string v = n[n.Length - 1] == '+' ? option : null;
+            string v = n[^1] == '+' ? option : null;
             c.OptionName = option;
             c.Option = p;
             c.OptionValues.Add(v);
@@ -1043,7 +1038,7 @@ namespace gOldCleaner.InfrastructureServices
                         }
                         else
                         {
-                            sb.Append(description.Substring(start, i - start));
+                            sb.Append(description[start..i]);
                             start = -1;
                         }
                         break;
@@ -1086,10 +1081,10 @@ namespace gOldCleaner.InfrastructureServices
                         --end;
                     }
                 }
-                lines.Add(description.Substring(start, end - start));
+                lines.Add(description[start..end]);
                 if (cont)
                 {
-                    lines[lines.Count - 1] += "-";
+                    lines[^1] += "-";
                 }
                 start = end;
                 if (start < description.Length && description[start] == '\n')
@@ -1125,4 +1120,3 @@ namespace gOldCleaner.InfrastructureServices
         }
     }
 }
-

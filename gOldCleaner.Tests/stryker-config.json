@@ -1,0 +1,28 @@
+{
+    "stryker-config":
+    {      
+        "reporters":[
+            "progress",
+            "html"        
+        ],  
+        "log-level":"info",
+        "timeout-ms":10000,
+        "log-file":true,
+        "max-concurrent-test-runners":4,
+        "project-file":"gOldCleaner.csproj",
+        "threshold-high":80,
+        "threshold-low":70,
+        "threshold-break":60,
+        "file-patterns": [
+          "!**/*NDeskOptions.cs"
+        ],
+        "excluded-mutations": [
+          "string"
+        ],
+        "ignore-methods": [
+            "*Log*",
+            "ToString",
+            "*HashCode*"
+        ]
+    }
+}

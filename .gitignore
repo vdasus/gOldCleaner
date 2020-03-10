@@ -264,3 +264,4 @@ __pycache__/
 *.~v
 temp/
 publish/
+StrykerOutput/

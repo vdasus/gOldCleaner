@@ -10,16 +10,16 @@
   <ItemGroup>
     <PackageReference Include="AutoFixture" Version="4.11.0" />
     <PackageReference Include="CSharpFunctionalExtensions">
-      <Version>2.3.0</Version>
+      <Version>2.4.1</Version>
     </PackageReference>
     <PackageReference Include="DryIoc.dll">
       <Version>4.1.1</Version>
     </PackageReference>
     <PackageReference Include="FluentAssertions" Version="5.10.2" />
-    <PackageReference Include="FsCheck.Xunit" Version="2.14.1" />
+    <PackageReference Include="FsCheck.Xunit" Version="2.14.2" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.5.0" />
     <PackageReference Include="Moq" Version="4.13.1" />
-    <PackageReference Include="NetArchTest.Rules" Version="1.2.4" />
+    <PackageReference Include="NetArchTest.Rules" Version="1.2.5" />
     <PackageReference Include="NLog">
       <Version>4.6.8</Version>
     </PackageReference>

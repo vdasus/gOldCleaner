@@ -19,7 +19,6 @@ namespace gOldCleaner.DomainServices
         {
             _storage = storage;
             _informer = informer;
-            Result.ErrorMessagesSeparator = "\n";
         }
 
         public Result Cleanup(FolderItem folder)

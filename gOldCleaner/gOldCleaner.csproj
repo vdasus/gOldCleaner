@@ -3,8 +3,8 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <OutputType>Exe</OutputType>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <AssemblyVersion>2.1.0.2</AssemblyVersion>
-    <Version>2.1.0.2</Version>
+    <AssemblyVersion>2.1.0.3</AssemblyVersion>
+    <Version>2.1.0.3</Version>
     <Authors>vdasus</Authors>
   </PropertyGroup>
   <ItemGroup>

@@ -2,6 +2,7 @@
 using gOldCleaner.InfrastructureServices;
 using NLog;
 using System.IO.Abstractions;
+using CSharpFunctionalExtensions;
 using gOldCleaner.DomainServices;
 
 namespace gOldCleaner
@@ -13,6 +14,7 @@ namespace gOldCleaner
 
         static CompositionRoot()
         {
+            Result.ErrorMessagesSeparator = "\n";
             InitContainer();
         }
 

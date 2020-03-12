@@ -10,7 +10,7 @@ using Microsoft.Extensions.Configuration;
 
 namespace gOldCleaner
 {
-    internal sealed class Program
+    internal static class Program
     {
         private const string APP_NAME = "gOldCleaner";
         private const string APP_DESCRIPTION = "Cleanup old files";

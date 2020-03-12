@@ -12,7 +12,7 @@ namespace gOldCleaner.InfrastructureServices
 
         IEnumerable<string> SafeEnumerateFiles(string folderItemFolderName, string searchPattern,
             SearchOption searchOption);
-        DateTime GetLastWriteTimeUtc(string filename);
+        DateTime GetLastWriteTimeUtc(string fileName);
         long GetFileSize(string fileName);
         string GetFileName(string fileName);
         Result DeleteFile(string path);

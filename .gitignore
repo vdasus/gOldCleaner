@@ -265,3 +265,4 @@ __pycache__/
 temp/
 publish/
 StrykerOutput/
+/.sonarqube
